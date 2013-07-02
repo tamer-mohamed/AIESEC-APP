@@ -1,0 +1,71 @@
+<?php
+
+function lc_management_schema() {
+    return array(
+        'lc' => array(
+            'description' => 'The base table for lcs.',
+            'fields' => array(
+                'id' => array(
+                    'description' => 'The primary identifier for a lc.',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'name' => array(
+                    'description' => 'The name of lc.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'created' => array(
+                    'description' => 'The timestamp of lc creation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'activated' => array(
+                    'description' => 'The status of activation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+            ),
+            'primary key' => array('id'),
+        )
+    );
+}
+
+function lc_management_install() {
+    $role = new stdClass();
+    $role->name = 'mcp';
+    user_role_save($role);
+    
+    $role = new stdClass();
+    $role->name = 'mcvp';
+    user_role_save($role);
+    
+    $role = new stdClass();
+    $role->name = 'lcp';
+    user_role_save($role);
+    
+    $role = new stdClass();
+    $role->name = 'lcvp';
+    user_role_save($role);
+    
+    $role = new stdClass();
+    $role->name = 'ep';
+    user_role_save($role);
+}
+
+function lc_management_uninstall() {
+    user_role_delete('mcp');
+    user_role_delete('mcvp');
+    user_role_delete('lcp');
+    user_role_delete('lcvp');
+    user_role_delete('ep');
+}
+
+?>

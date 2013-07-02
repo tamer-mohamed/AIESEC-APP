@@ -1,0 +1,7 @@
+name = LC Field
+description = This module will provide new field for the user which contains all the lcs
+core = 7.x
+package = Miracle Pixels
+
+dependencies[] = lc_management
+files[] = lc_field.module

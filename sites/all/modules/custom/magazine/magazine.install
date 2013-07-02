@@ -1,0 +1,94 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function magazine_uninstall() {
+    // Use schema API to delete database table.
+    // remove node revisions
+    db_query('DELETE FROM {node_revision} WHERE nid in (select nid from {node} WHERE type = :type)', array(':type' => 'magazine'));
+
+    // remove variables
+    db_query('DELETE FROM {variable} WHERE name like :type', array(':type' => 'magazine_%'));
+    image_style_delete(image_style_load('magazine'));
+    drupal_uninstall_schema('magazine');
+    field_delete_field('magazine_tags');
+    
+    taxonomy_vocabulary_delete(taxonomy_vocabulary_machine_name_load('magazine_tags')->vid);
+}
+
+function magazine_install() {
+
+
+    $edit = array(
+        'name' => 'Magazine Tags',
+        'machine_name' => 'magazine_tags',
+        'description' => t('Use keywords to identify contents.'),
+        'module' => 'taxonomy',
+    );
+    $vocabulary = (object) $edit;
+    taxonomy_vocabulary_save($vocabulary);
+
+
+    if (!field_info_field('magazine_tags')) {
+        $field = array(
+            'field_name' => 'magazine_tags',
+            'label' => t('Magazine Tags'),
+            'cardinality' => -1,
+            'type' => 'taxonomy_term_reference',
+            'settings' => array(
+                'allowed_values' => array(
+                    array(
+                        'vocabulary' => 'magazine_tags',
+                        'parent' => 0,
+                    ),
+                ),
+            ),
+        );
+        field_create_field($field);
+    }
+
+
+    $style = image_style_save(array('name' => 'magazine'));
+    $effect = array(
+        'name' => 'image_scale_and_crop',
+        'data' => array(
+            'width' => 1000,
+            'height' => 360,
+            'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+    );
+    image_effect_save($effect);
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function magazine_schema() {
+    $schema['magazine'] = array(
+        'fields' => array(
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'description' => array(
+                'type' => 'text',
+            ),
+            'date' => array(
+                'type' => 'int',
+            ),
+            'image' => array(
+                'type' => 'text',
+                'size' => 'big'
+            ),
+        ),
+        'primary key' => array('nid'),
+    );
+    return $schema;
+}

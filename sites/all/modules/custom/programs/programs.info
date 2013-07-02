@@ -1,0 +1,6 @@
+name = programs
+description = Manage The Magazine
+package = Miracle Pixels
+core = 7.x
+
+

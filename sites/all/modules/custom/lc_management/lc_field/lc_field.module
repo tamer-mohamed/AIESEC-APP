@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * specify the field when the module enabled
+ * 
+ */
+function lc_field_enable() {
+    $instance = array(
+        'field_name' => 'lc_field',
+        'entity_type' => 'user',
+        'label' => 'LC',
+        'bundle' => 'user',
+        'required' => TRUE,
+        'settings' => array(
+            'user_register_form' => 1,
+        ),
+        'widget' => array(
+            'type' => 'options_select',
+            'settings' => _lc_management_get_lcsOptions()
+        ),
+        
+    );
+    field_create_instance($instance);
+}
+
+/**
+ * Get Lcs or single lc by id query
+ * 
+ * @return array 
+ */
+function _lc_management_get_lcsOptions() {
+    $result = db_query('SELECT lc.id, lc.name from lc');
+    $rows = array();
+    while ($record = $result->fetchAssoc()) 
+        $rows[$record['id']] = $record['name'];
+    
+    return $rows;
+}
+
+?>

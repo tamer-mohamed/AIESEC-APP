@@ -1,0 +1,9 @@
+name = LC Manage Page
+description = This module allow you to administer the lc page on the website
+core = 7.x
+package = Miracle Pixels
+
+dependencies[] = lc_management
+dependencies[] = lc_field
+
+files[] = lc_managepage.module

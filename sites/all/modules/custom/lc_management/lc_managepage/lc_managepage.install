@@ -1,0 +1,235 @@
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function lc_managepage_schema() {
+    return array(
+        'lc_page' => array(
+            'description' => 'The base table for pages.',
+            'fields' => array(
+                'id' => array(
+                    'description' => 'The primary identifier for a lc.',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'lc_id' => array(
+                    'description' => 'The id of lc.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'created' => array(
+                    'description' => 'The timestamp of page creation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'bg_img' => array(
+                    'description' => 'The bg path.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'logo' => array(
+                    'description' => 'The logo path.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'description' => array(
+                    'description' => 'The desc in html.',
+                    'type' => 'text',
+                    'not null' => TRUE,
+                ),
+                'facebook' => array(
+                    'description' => 'The fb.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'twitter' => array(
+                    'description' => 'The tw.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'youtube' => array(
+                    'description' => 'The yt.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+            ),
+            'primary key' => array('id'),
+        ),
+        'partner' => array(
+            'description' => 'The base table for partners.',
+            'fields' => array(
+                'id' => array(
+                    'description' => 'The primary identifier for a partner.',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'lc_id' => array(
+                    'description' => 'The id of partner.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'title' => array(
+                    'description' => 'The title of partner.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'created' => array(
+                    'description' => 'The timestamp of page creation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'img' => array(
+                    'description' => 'The bg path.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'description' => array(
+                    'description' => 'The desc in plain text.',
+                    'type' => 'text',
+                    'not null' => TRUE,
+                ),
+                'url' => array(
+                    'description' => 'The url.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+            ),
+            'primary key' => array('id'),
+        ),
+        'team' => array(
+            'description' => 'The base table for team.',
+            'fields' => array(
+                'id' => array(
+                    'description' => 'The primary identifier for a team.',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'lc_id' => array(
+                    'description' => 'The id of lc.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'created' => array(
+                    'description' => 'The timestamp of page creation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'img' => array(
+                    'description' => 'The bg path.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'description' => array(
+                    'description' => 'The desc in html.',
+                    'type' => 'text',
+                    'not null' => TRUE,
+                ),
+                'facebook' => array(
+                    'description' => 'The fb.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'twitter' => array(
+                    'description' => 'The tw.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'linkedin' => array(
+                    'description' => 'The linkedin.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+            ),
+            'primary key' => array('id'),
+        ),
+        'news' => array(
+            'description' => 'The base table for mews.',
+            'fields' => array(
+                'id' => array(
+                    'description' => 'The primary identifier for a news.',
+                    'type' => 'serial',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                ),
+                'lc_id' => array(
+                    'description' => 'The id of news.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'title' => array(
+                    'description' => 'The title of news.',
+                    'type' => 'varchar',
+                    'length' => 32,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'created' => array(
+                    'description' => 'The timestamp of news creation.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'img' => array(
+                    'description' => 'The bg path.',
+                    'type' => 'varchar',
+                    'length' => 50,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'description' => array(
+                    'description' => 'The desc in plain text.',
+                    'type' => 'text',
+                    'not null' => TRUE,
+                )
+            ),
+            'primary key' => array('id'),
+        ),
+    );
+}
+
+?>

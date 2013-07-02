@@ -1,0 +1,77 @@
+<?php
+
+function lc_management_menu() {
+    return array( 
+        'admin/config/lcs' => array(
+            'title' => 'Manage Lcs',
+            'description' => 'Configure Lcs Management.',
+            'weight' => -30,
+            'page callback' => '_lc_management_admin',
+            'access arguments' => array('administer lcs'),
+            'file' => 'lcs.admin.inc',
+        ),
+        'admin/config/lcs/manage' => array(
+            'title' => 'Manage Lcs',
+            'description' => 'Allows admins to manage lcs',
+            'page callback' => '_lc_management_admin',
+            'access arguments' => array('administer lcs'),
+            'file' => 'lcs.admin.inc',
+            'weight' => -10,
+        ),
+        'admin/config/lcs/manage/add' => array(
+            'title' => 'Add Lc',
+            'type' => MENU_LOCAL_ACTION,
+            'description' => 'Allows admins to add lcs',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_management_admin_add'),
+            'access arguments' => array('add lcs'),
+            'file' => 'lcs.admin.inc',
+            'weight' => -10,
+        ),
+        'admin/config/lcs/delete/%' => array(
+            'title' => 'delete Lc',
+            'description' => 'Allows admins to delete lcs',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_management_admin_delete_confirm',4),
+            'access arguments' => array('delete lcs'),
+            'file' => 'lcs.admin.inc',
+            'weight' => -10,
+        ),
+        'admin/config/lcs/edit/%' => array(
+            'title' => 'Edit Lc',
+            'description' => 'Allows admins to edit lcs',
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_management_admin_edit',4),
+            'access arguments' => array('edit lcs'),
+            'file' => 'lcs.admin.inc',
+            'weight' => -10,
+        )
+    );
+}
+
+function lc_management_permission() {
+    return array(
+        'administer lcs' => array(
+            'title' => t('Administer lcs'),
+            'description' => t('Perform administration tasks for lcs.'),
+            'restrict access' => TRUE,
+        ),
+        'add lcs' => array(
+            'title' => t('Add lcs'),
+            'description' => t('Perform Add administration tasks for lcs.'),
+            'restrict access' => TRUE,
+        ),
+        'edit lcs' => array(
+            'title' => t('Edit lcs'),
+            'description' => t('Perform Edit administration tasks for lcs.'),
+            'restrict access' => TRUE,
+        ),
+        'delete lcs' => array(
+            'title' => t('Delete lcs'),
+            'description' => t('Perform Delete administration tasks for lcs.'),
+            'restrict access' => TRUE,
+        ),
+    );
+}
+
+?>

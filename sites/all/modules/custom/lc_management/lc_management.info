@@ -1,0 +1,9 @@
+name = LC Management
+description = This module allow you to manage lc and allows each lc to manage its own page.
+core = 7.x
+package = Miracle Pixels
+
+files[] = lc_management.module
+files[] = lcs.admin.inc
+
+configure = admin/config/lcs/manage

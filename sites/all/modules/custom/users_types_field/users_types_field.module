@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * specify the field when the module enabled
+ * 
+ */
+function users_types_field_enable() {
+    $instance = array(
+        'field_name' => 'users_type',
+        'entity_type' => 'node',
+        'label' => 'Type',
+        'bundle' => 'magazine',
+        'required' => TRUE,
+        'widget' => array(
+            'type' => 'options_select',
+            'settings' => _users_types_get_users_types()
+        )
+    );
+    
+    field_create_instance($instance);
+     $instance = array(
+        'field_name' => 'users_type',
+        'entity_type' => 'node',
+        'label' => 'For',
+        'bundle' => 'programs',
+        'required' => TRUE,
+        'widget' => array(
+            'type' => 'options_select',
+            'settings' => _users_types_get_users_types()
+        )
+    );
+    
+    field_create_instance($instance);
+}
+
+/**
+ * Get Lcs or single lc by id query
+ * 
+ * @return array 
+ */
+function _users_types_get_users_types() {
+    return array(1 => 'student', 2 => 'company', 3 => 'alumni');
+}
+
+?>

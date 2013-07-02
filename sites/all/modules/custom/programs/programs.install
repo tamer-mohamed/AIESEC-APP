@@ -1,0 +1,61 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function programs_uninstall() {
+    // Use schema API to delete database table.
+    // remove node revisions
+    db_query('DELETE FROM {node_revision} WHERE nid in (select nid from {node} WHERE type = :type)', array(':type' => 'programs'));
+
+    // remove variables
+    db_query('DELETE FROM {variable} WHERE name like :type', array(':type' => 'programs_%'));
+    image_style_delete(image_style_load('programs'));
+    drupal_uninstall_schema('programs');
+}
+
+function programs_install() {
+    $style = image_style_save(array('name' => 'programs'));
+    $effect = array(
+        'name' => 'image_scale_and_crop',
+        'data' => array(
+            'width' => 1000,
+            'height' => 360,
+            'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+    );
+    image_effect_save($effect);
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function programs_schema() {
+    $schema['programs'] = array(
+        'fields' => array(
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'description' => array(
+                'type' => 'text',
+            )
+            ,
+            'summary' => array(
+                'type' => 'text',
+            ),
+            'image' => array(
+                'type' => 'text',
+                'size' => 'big'
+            ),
+        ),
+        'primary key' => array('nid'),
+    );
+    return $schema;
+}

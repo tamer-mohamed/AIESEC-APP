@@ -1,0 +1,10 @@
+name = events
+description = Manage Events
+package = Miracle Pixels
+core = 7.x
+
+dependencies[] = ctools
+dependencies[] = upload_default_avatar
+
+
+

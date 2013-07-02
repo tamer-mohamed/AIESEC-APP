@@ -1,0 +1,135 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 8, ../sass/screen.scss */
+body {
+  background: #e1e1e1;
+}
+
+/* line 13, ../sass/screen.scss */
+h1 {
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+/* line 14, ../sass/screen.scss */
+h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+/* line 15, ../sass/screen.scss */
+h3 {
+  font-size: 18px;
+}
+
+/* line 16, ../sass/screen.scss */
+h4 {
+  font-size: 16px;
+}
+
+/* line 17, ../sass/screen.scss */
+h5 {
+  font-size: 14px;
+}
+
+/* line 18, ../sass/screen.scss */
+h6 {
+  font-size: 12px;
+}
+
+/* line 19, ../sass/screen.scss */
+p {
+  color: gray;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/* line 23, ../sass/screen.scss */
+h1, h2, h3, h4, h5, h6 {
+  color: #817c7c;
+  line-height: 1;
+}
+
+/* line 30, ../sass/screen.scss */
+.absolute {
+  position: absolute;
+}
+
+/* line 32, ../sass/screen.scss */
+.siteContainer {
+  background: #f0f0f0;
+}
+
+/* line 35, ../sass/screen.scss */
+.footer {
+  padding-top: 10px;
+  border-top: 1px solid #d9d8d8;
+}
+
+/* line 39, ../sass/screen.scss */
+#navbar {
+  margin-bottom: 0px;
+}
+/* line 41, ../sass/screen.scss */
+#navbar .menu {
+  margin-top: 10px;
+}
+/* line 43, ../sass/screen.scss */
+#navbar .menu a {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  background-color: transparent;
+  margin-top: 10px;
+}
+
+/* line 51, ../sass/screen.scss */
+.navbar-inverse .navbar-inner {
+  background: #204887 !important;
+}
+
+/* line 57, ../sass/screen.scss */
+.logo {
+  margin-top: 12px;
+  margin-bottom: 5px;
+}
+
+/* line 63, ../sass/screen.scss */
+.highlighted_container img {
+  width: 100%;
+}
+
+/* line 68, ../sass/screen.scss */
+.slider_info_container {
+  top: 14%;
+  width: 40%;
+  left: 50%;
+  margin-left: -20%;
+}
+/* line 73, ../sass/screen.scss */
+.slider_info_container .slide_title {
+  color: #FFF;
+  text-shadow: 1px 1px 1px black;
+  text-align: center;
+}
+/* line 78, ../sass/screen.scss */
+.slider_info_container .slide_paragraph {
+  background: url('../images/theme/backgrounds/blueTrans.png?1369087068') repeat;
+  padding: 20px;
+  color: #FFF;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+/* line 88, ../sass/screen.scss */
+.block-title {
+  margin-bottom: 10px;
+}
+
+/* line 96, ../sass/screen.scss */
+#block-slider-slider .slider_carousel {
+  height: 360px;
+  overflow: hidden;
+}

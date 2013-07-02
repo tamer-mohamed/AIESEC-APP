@@ -1,0 +1,155 @@
+<?php
+
+function slider_node_info() {
+    return array(
+        'slider' => array(
+            'name' => t('Homepage Slider'),
+            'base' => 'slider',
+            'description' => t('Upload photos for Homepage Slider.'),
+        ),
+    );
+}
+
+function slider_form($node, &$form_state) {
+    $form['title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->title) ? $node->title : ''
+    );
+    $form['description'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Description'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->description) ? $node->description : ''
+    );
+
+
+    $form['slider_image'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'slider_image',
+        '#title' => t('Photo'),
+        '#size' => 40,
+        '#default_value' => !empty($node->image) ? $node->image : NULL,
+        '#description' => t("Image should be less than 400 pixels wide and in JPG format."),
+        '#upload_location' => 'public://',
+        '#required' => TRUE,
+        '#theme' => 'image_multifield_multitype'
+    );
+    $form['link_blue'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Link For Blue Button'),
+        '#required' => TRUE,
+        '#description' => "Optional:You can leave it empty in case of you don't want it to appear",
+        '#default_value' => !empty($node->link1) ? $node->link1 : 'http://'
+    );
+    $form['link_gray'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Link For Gray Button'),
+        '#required' => TRUE,
+        '#description' => "Optional:You can leave it empty in case of you don't want it to appear",
+        '#default_value' => !empty($node->link2) ? $node->link2 : 'http://'
+    );
+    return $form;
+}
+
+function slider_validate($node, $form, &$form_state) {
+    if ($form_state['values']['link_blue'] == 'http://')
+        $form_state['values']['link_blue'] = "";
+    if ($form_state['values']['link_gray'] == 'http://')
+        $form_state['values']['link_gray'] = "";
+}
+
+function slider_load($nodes) {
+
+    $result = db_select('homepage_slider', 'hps')
+            ->fields('hps')
+            ->condition('nid', array_keys($nodes), 'IN')
+            ->execute()
+            ->fetchAll();
+//    $result = db_query('SELECT * FROM {recipe} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+    foreach ($result as $record) {
+        $nodes[$record->nid]->description = $record->description;
+        $nodes[$record->nid]->image = $record->image;
+        $nodes[$record->nid]->link_blue = $record->link_blue;
+        $nodes[$record->nid]->link_gray = $record->link_gray;
+    }
+}
+
+function slider_block_info() {
+    $blocks = array();
+    $blocks['slider'] = array(
+        'info' => t('Slider'),
+    );
+    return $blocks;
+}
+
+function slider_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'slider' :
+            $block['content'] = _display_slider();
+            break;
+    }
+
+    return $block;
+}
+
+function _display_slider() {
+    $query = db_select('homepage_slider', 'hps');
+    $query->join('node', 'n', 'n.nid = hps.nid');
+    $query->fields('hps')
+            ->fields('n', array('title'));
+    $result = $query->execute()->fetchAll();
+    return theme('slider', array('slider' => $result));
+}
+
+function slider_insert($node) {
+    db_insert('homepage_slider')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                'image' => $node->slider_image,
+                'link_blue' => $node->link_gray,
+                'link_gray' => $node->link_blue
+            ))
+            ->execute();
+
+    if (isset($node->slider_image)) {
+        $file = file_load($node->slider_image);
+
+        $file->status = FILE_STATUS_PERMANENT;
+
+        file_save($file);
+    }
+}
+
+function slider_update($node) {
+    db_update('homepage_slider')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                'image' => $node->slider_image,
+                'link_blue' => $node->link_gray,
+                'link_gray' => $node->link_blue
+            ))
+            ->condition('nid', $node->nid)
+            ->execute();
+}
+
+function slider_delete($node) {
+    db_delete('homepage_slider')
+            ->condition('nid', $node->nid)
+            ->execute();
+}
+
+function slider_theme() {
+    return array(
+        'slider' => array(
+            'variables' => array(
+                'slider' => NULL,
+            ), 'template' => 'slider'
+        ),
+    );
+}

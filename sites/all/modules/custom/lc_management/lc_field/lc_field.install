@@ -1,0 +1,19 @@
+<?php
+
+function lc_field_install(){
+    if (!field_info_field('lc_field')) {
+        $field = array(
+            'field_name' => 'lc_field',
+            'type' => 'list_text',
+            'settings' => array('allowed_values_function' => '_lc_management_get_lcsOptions'),
+        );
+        field_create_field($field);
+    }
+}
+/**
+ * uninstall lc field module
+ */
+function lc_field_uninstall(){
+    field_delete_field('lc_field');  
+}
+?>

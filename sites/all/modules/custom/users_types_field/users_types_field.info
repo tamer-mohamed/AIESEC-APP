@@ -1,0 +1,7 @@
+name = users_types_field
+description = This module will provide new field for the user which contains all the lcs
+core = 7.x
+package = Miracle Pixels
+
+dependencies[] = magazine
+dependencies[] = programs

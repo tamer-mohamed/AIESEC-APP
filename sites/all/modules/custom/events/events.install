@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function events_uninstall() {
+    // Use schema API to delete database table.
+    // remove node revisions
+    db_query('DELETE FROM {node_revision} WHERE nid in (select nid from {node} WHERE type = :type)', array(':type' => 'events'));
+
+    // remove variables
+    db_query('DELETE FROM {variable} WHERE name like :type', array(':type' => 'events_%'));
+    image_style_delete(image_style_load('events'));
+    drupal_uninstall_schema('events');
+    drupal_uninstall_schema('events_attendees');
+    drupal_uninstall_schema('events_posts');
+}
+
+function events_install() {
+    $style = image_style_save(array('name' => 'events'));
+    $effect = array(
+        'name' => 'image_scale_and_crop',
+        'data' => array(
+            'width' => 1000,
+            'height' => 360,
+            'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+    );
+    image_effect_save($effect);
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function events_schema() {
+    $schema['events'] = array(
+        'fields' => array(
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'description' => array(
+                'type' => 'text',
+            )
+            ,
+            'start_date' => array(
+                'type' => 'int',
+            ),
+            'end_date' => array(
+                'type' => 'int',
+            ),
+            'image' => array(
+                'type' => 'text',
+                'size' => 'big'
+            ),
+            'location' => array(
+                'type' => 'text',
+            ),
+            'organizer' => array(
+                'type' => 'text',
+            ),
+        ),
+        'primary key' => array('nid'),
+    );
+    $schema['events_attendees'] = array(
+        'fields' => array(
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'uid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            )
+            ,
+            'date' => array(
+                'type' => 'int',
+            ),
+        ),
+        'primary key' => array('nid', 'uid'),
+    );
+    $schema['events_posts'] = array(
+        'fields' => array(
+            'pid' => array(
+                'type' => 'serial',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'post' => array(
+                'type' => 'text',
+            )
+            ,
+            'date' => array(
+                'type' => 'int',
+            ),
+            'uid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            )
+        ),
+        'primary key' => array('pid'),
+    );
+    return $schema;
+}

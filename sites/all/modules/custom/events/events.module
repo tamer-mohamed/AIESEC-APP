@@ -1,0 +1,260 @@
+<?php
+/// THEME 
+function events_theme() {
+    return array(
+        'events_latest_student' => array(
+            'variables' => array(
+                'latest_student' => NULL,
+            ), 'template' => 'latest-student'
+        ),
+        'events_latest_company' => array(
+            'variables' => array(
+                'latest_company' => NULL,
+            ), 'template' => 'latest-company'
+        ),
+        'event_image' => array(
+            'function' => 'theme_event_image',
+            'variables' => array('node' => NULL),
+        ),
+        'event_attendees' => array(
+            'function' => 'theme_event_attendees',
+            'variables' => array('node' => NULL),
+        ),
+        'events_latest_alumni' => array(
+            'variables' => array(
+                'latest_alumni' => NULL,
+            ), 'template' => 'latest-alumni'
+        ),
+        'upcoming_events' => array(
+            'variables' => array(
+                'events' => NULL,
+            ), 'template' => 'upcoming-events'
+        ),
+        'events_tease' => array(
+            'variables' => array(
+                'events' => NULL,
+            ), 'template' => 'upcoming-events'
+        )
+    );
+}
+
+function events_view($node, $view_mode) {
+    // debug($node);
+
+    if ($node->type == 'events') {
+
+        $node->content['title'] = array(
+            '#markup' => '<h1>' . $node->title . '</h1>',
+            '#weight' => 1,
+        );
+        $image = file_load($node->image);
+        $variables = array(
+            'path' => image_style_url('events', $image->uri),
+            'alt' => $node->title,
+            'title' => $node->title,
+            'attributes' => array('class' => 'img-polaroid', 'id' => $node->title),
+        );
+        $img = theme('image', $variables);
+        $node->content['events_image'] = array(
+            '#markup' => $img,
+            '#weight' => 1,
+        );
+        $node->content['start_date'] = array(
+            '#markup' => date('d M,Y', $node->start_date),
+            '#weight' => 2,
+        );
+        $node->content['end_date'] = array(
+            '#markup' => date('d M,Y', $node->end_date),
+            '#weight' => 3,
+        );
+        $organizer = user_load($node->organizer);
+        $node->content['organizer'] = array(
+            '#markup' => t('!username', array('!username' => theme('username', array('account' => $organizer)))),
+            '#weight' => 3,
+        );
+
+        $node->content['description'] = array(
+            '#markup' => '<p>' . $node->description . '</p>',
+            '#weight' => 4,
+        );
+        ctools_include('ajax');
+        $node->content['attend_button'] = array(
+            '#markup' =>
+            !_events_check_attendee($GLOBALS['user'], $node->nid) ?
+                    ctools_ajax_text_button(t('Attend'), 'events/nojs/attend/' . $node->nid, 'Attend', 'pull-right btn btn-primary attend-event') :
+                    ctools_ajax_text_button(t('Not going'), 'events/nojs/notgoing/' . $node->nid, 'Not Going', 'pull-right btn btn-secondary nogoing-event')
+            ,
+            '#weight' => 5,
+        );
+        $attendees = _events_get_attendees($node->nid);
+
+        if (count($attendees) > 0)
+            $node->content['event_attendees'] = array(
+                '#markup' => '<h5>' . t('Going (!number)', array('!number' => count($attendees))) . '</h5>' . theme('event_attendees', array('attendees' => $attendees)),
+                '#weight' => 5,
+            );
+
+        return $node;
+    }
+}
+
+function theme_event_view($variables) {
+    $node = $variables['node'];
+    $image = file_load($node->image);
+    $output = '<img src="' . image_style_url('events', $image->uri) . '" />';
+    return $output;
+}
+
+function theme_event_attendees($variables) {
+    $attendees = $variables['attendees'];
+    $output = '<ul class="event-list-attendees">';
+    foreach ($attendees as $single_user) {
+        $user_attend = user_load($single_user->uid);
+        $output .= '<li>' . theme('user_picture', array('account' => $user_attend)) . '' . theme('username', array('account' => $user_attend)) . '</li>';
+    }
+    $output .= '</ul>';
+    return $output;
+}
+
+/// BLOCKS 
+function events_block_info() {
+    $blocks = array();
+    $blocks['events_upcoming'] = array(
+        'info' => t('Latest Posts Magazine'),
+    );
+    return $blocks;
+}
+
+function events_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'events_latest_student' :
+            $block['content'] = _display_latest_events_posts(1);
+            break;
+        case 'events_latest_company' :
+            $block['content'] = _display_latest_events_posts(2);
+            break;
+
+        case 'events_latest_alumni' :
+            $block['content'] = _display_latest_events_posts(3);
+            break;
+
+        case 'events_upcoming' :
+            $block['content'] = _events_display_upcoming(5);
+            break;
+    }
+
+    return $block;
+}
+
+function _display_latest_events_posts($type) {
+
+    $query = db_select('events', 'm')->condition('type', $type);
+    $query->join('node', 'n', 'n.nid = m.nid');
+    $query->fields('m')
+            ->fields('n', array('title'));
+    $result = $query->execute()->fetchAll();
+    switch ($type) {
+        case 1: //student
+            return theme('events_latest_student', array('latest_student' => $result));
+            break;
+
+        case 2://Company
+            return theme('events_latest_company', array('latest_company' => $result));
+            break;
+        case 3://Alumni
+            return theme('events_latest_alumni', array('latest_alumni' => $result));
+            break;
+    }
+}
+
+function _events_display_upcoming($limit) {
+    $query = db_select('events', 'e');
+    $query->join('node', 'n', 'n.nid=e.nid');
+    $query->fields('e')
+            ->fields('n', array('title'))
+            ->condition('e.start_date', time(), '<=')
+            ->orderBy('e.start_date', 'DESC');
+    $results = $query->execute()->fetchAll();
+
+    return theme('upcoming_events', array('events' => $results));
+}
+
+// HELPERS 
+
+function _events_attend($account, $eventid) {
+    db_insert('events_attendees')
+            ->fields(array(
+                'uid' => $account->uid,
+                'nid' => $eventid,
+                'date' => time()
+            ))->execute();
+}
+
+function _events_notgoing($account, $eventid) {
+    db_delete('events_attendees')
+            ->condition('uid', $account->uid)->condition('nid', $eventid)->execute();
+}
+
+function _events_get_attendees($eventid) {
+    $results = db_select('events_attendees', 'ea')
+            ->fields('ea')
+            ->condition('nid', $eventid)
+            ->execute()
+            ->fetchAllAssoc('uid');
+
+    return $results;
+}
+
+function _events_check_attendee($account, $eventid) {
+    $query = db_select('events_attendees', 'ea')
+            ->fields('ea')
+            ->condition('uid', $account->uid)
+            ->condition('nid', $eventid)
+            ->execute();
+
+    return $query->rowCount() > 0 ? TRUE : FALSE;
+}
+
+// ATTEND ACTIONS
+function _events_attend_action($js = NULL, $eventid) {
+    _events_attend($GLOBALS['user'], $eventid);
+    if (!$js) {
+        return t('You have been attended !eventname', array('!eventname' => $eventid));
+    }
+    ctools_include('ajax');
+
+
+    // delete attend button
+    $commands[] = ajax_command_invoke('.actions .attend-event', 'hide');
+    $commands[] = ctools_ajax_command_redirect('events/' . $eventid);
+    print ajax_render($commands);
+}
+
+function _events_notgoing_action($js = NULL, $eventid) {
+    _events_notgoing($GLOBALS['user'], $eventid);
+    if (!$js) {
+        return t('You have been attended !eventname', array('!eventname' => $eventid));
+    }
+    ctools_include('ajax');
+
+
+    // delete attend button
+    $commands[] = ajax_command_invoke('.actions .attend-event', 'hide');
+    $commands[] = ctools_ajax_command_redirect('events/' . $eventid);
+    print ajax_render($commands);
+}
+
+function _events_listing() {
+    $query = db_select('node', 'n')->extend('PagerDefault');
+    $query->join('events', 'e', 'e.nid = n.nid');
+    $query->fields('n', array('title'))->fields('e')->extend('PagerDefault')->limit(5);
+    $results = $query->execute()->fetchAll();
+    $output = '';
+    foreach ($results as $single_result) {
+        $rendered_area = node_view(node_load($single_result->nid), 'teaser');
+        $output .= drupal_render($rendered_area);
+    }
+    return $output;
+}

@@ -1,0 +1,100 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+ @import "compass/css3";
+$blue:#204887;
+$blue-dark:#1f1f1f;
+body{
+	background:#e1e1e1;
+}
+
+// TEXT AND PARAGRAPH
+h1{font-size:25px;margin-bottom:20px}
+h2{font-size:22px;margin-bottom:20px}
+h3{font-size:18px}
+h4{font-size:16px}
+h5{font-size:14px}
+h6{font-size:12px}
+p{color:gray;
+
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+}
+h1,h2,h3,h4,h5,h6{
+	color:rgb(129, 124, 124);
+	line-height:1;
+}
+
+
+// COMMON 
+.absolute{position:absolute;}
+// SITE LAYOUT
+.siteContainer{
+	background:#f0f0f0;
+}
+.footer{
+	padding-top:10px;
+	border-top:1px solid #d9d8d8;
+}
+#navbar{
+	margin-bottom:0px;
+	.menu{
+		margin-top:10px;
+		a{
+			@include box-shadow(none);
+			background-color:transparent;
+			margin-top:10px;
+		}
+	}
+}
+.navbar-inverse{
+	.navbar-inner{
+		background:$blue !important;
+}
+	}
+	
+
+	.logo{
+		margin-top:12px;
+		margin-bottom: 5px;
+	}
+
+.highlighted_container{
+	img{
+		width:100%;
+	}
+}
+// HIGHLIGHTED SLIDER 
+.slider_info_container{  
+	top:14%;
+	width:40%;
+	left:50%;
+	margin-left:-20%;
+	.slide_title{
+		color:#FFF;
+		@include text-shadow(1px 1px 1px #000);
+		text-align:center;
+	}
+	.slide_paragraph{
+		background: image-url('theme/backgrounds/blueTrans.png') repeat;
+		padding:20px;
+		color:#FFF;
+		font-size:16px;
+		line-height: 1.5;
+		text-align: center;
+	}
+}
+// Blocks
+.block-title{
+	margin-bottom:10px;
+}
+
+
+//SLIDER
+
+#block-slider-slider{
+	.slider_carousel{
+		height:360px;
+		overflow: hidden;
+	}
+}

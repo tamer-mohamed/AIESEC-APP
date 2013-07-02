@@ -1,0 +1,6 @@
+name = partners
+description = Manage The Partners
+package = Miracle Pixels
+core = 7.x
+
+

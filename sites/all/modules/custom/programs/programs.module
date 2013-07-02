@@ -1,0 +1,195 @@
+<?php
+
+function programs_node_info() {
+    return array(
+        'programs' => array(
+            'name' => t('AIESEC Programs'),
+            'base' => 'programs',
+            'description' => t('Add AIESEC Program.'),
+        ),
+    );
+}
+
+// FORM 
+function programs_form($node, &$form_state) {
+    $form['title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->title) ? $node->title : ''
+    );
+    $form['description'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Description'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->description) ? $node->description : ''
+    );
+
+
+//    $form['programs_image'] = array(
+//        '#type' => 'managed_file',
+//        '#name' => 'slider_image',
+//        '#title' => t('Photo'),
+//        '#size' => 40,
+//        '#default_value' => !empty($node->image) ? $node->image : NULL,
+//        '#description' => t("Image should be less than 400 pixels wide and in JPG format."),
+//        '#upload_location' => 'public://programs',
+//        '#required' => TRUE,
+//        '#theme' => 'image_multifield_multitype'
+//    );
+    return $form;
+}
+
+function programs_view($node) {
+    if ($node->type == "programs") {
+        $node->content['description'] = array(
+            '#markup' => '<p>' . $node->description . '</p>',
+            '#weight' => 4,
+        );
+//        $variables = array(
+//            'path' => image_style_url('programs',file_load($node->image)->uri),
+//            'alt' => $node->title,
+//            'title' => $node->title,
+//            'attributes' => array('class' => 'img-polaroid', 'id' => $node->title),
+//        );
+//         $node->content['image'] = array(
+//            '#markup' => theme('image',$variables) . '</p>',
+//            '#weight' => 4,
+//        );
+        return $node;
+    }
+}
+
+function programs_load($nodes) {
+
+    $result = db_select('programs', 'm')
+            ->fields('m')
+            ->condition('nid', array_keys($nodes), 'IN')
+            ->execute()
+            ->fetchAll();
+//    $result = db_query('SELECT * FROM {recipe} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+    foreach ($result as $record) {
+        $nodes[$record->nid]->description = $record->description;
+        //$nodes[$record->nid]->image = $record->image;
+    }
+}
+
+//// CRUD
+function programs_insert($node) {
+    db_insert('programs')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                    //'image' => $node->programs_image
+            ))
+            ->execute();
+
+    $node->path['alias'] = 'programs/' . $node->nid;
+}
+
+function programs_update($node) {
+    db_update('programs')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                    //'image' => $node->programs_image
+            ))
+            ->condition('nid', $node->nid)
+            ->execute();
+
+    $node->path['alias'] = 'programs/' . $node->nid;
+}
+
+function programs_delete($node) {
+    db_delete('programs')
+            ->condition('nid', $node->nid)
+            ->execute();
+}
+
+/// THEME 
+function programs_theme() {
+    return array(
+        'programs_latest_student' => array(
+            'variables' => array(
+                'latest_student' => NULL,
+            ), 'template' => 'latest-student'
+        ),
+        'programs_latest_company' => array(
+            'variables' => array(
+                'latest_company' => NULL,
+            ), 'template' => 'latest-company'
+        ),
+        'programs_latest_alumni' => array(
+            'variables' => array(
+                'latest_alumni' => NULL,
+            ), 'template' => 'latest-alumni'
+        ),
+    );
+}
+
+/// BLOCKS 
+function programs_block_info() {
+    $blocks = array();
+    $blocks['latest_programs_students'] = array(
+        'info' => t('Latest Programs Stdeunts'),
+    );
+    $blocks['latest_programs_alumni'] = array(
+        'info' => t('Latest Programs Alumni'),
+    );
+    $blocks['latest_programs_company'] = array(
+        'info' => t('Latest Programs Company'),
+    );
+    return $blocks;
+}
+
+function programs_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'latest_programs_students' :
+            $block['content'] = _display_latest_programs_posts(1);
+            break;
+        case 'latest_programs_company' :
+            $block['content'] = _display_latest_programs_posts(2);
+            break;
+        case 'latest_programs_alumni' :
+            $block['content'] = _display_latest_programs_posts(3);
+            break;
+    }
+
+    return $block;
+}
+
+function _display_latest_programs_posts($type) {
+    $query = new EntityFieldQuery;
+    $result_nodes = $query->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', 'programs')
+                    ->fieldCondition('users_type', 'value', $type)->execute();
+
+    if (isset($result_nodes['node'])) {
+        $nids = array_keys($result_nodes['node']);
+        $query = db_select('programs', 'p');
+        $query->join('node', 'n', 'n.nid = p.nid');
+        $query->fields('p')->condition('n.nid', $nids, 'IN')->fields('n', array('title'));
+        $result = $query->execute()->fetchAll();
+    }
+    else
+    {
+        $result = array();
+    }
+
+
+    switch ($type) {
+        case 1: //student
+            return theme('programs_latest_student', array('latest_student' => $result));
+            break;
+
+        case 2://Company
+            return theme('programs_latest_company', array('latest_company' => $result));
+            break;
+        case 3://Alumni
+            return theme('programs_latest_alumni', array('latest_alumni' => $result));
+            break;
+    }
+}
+

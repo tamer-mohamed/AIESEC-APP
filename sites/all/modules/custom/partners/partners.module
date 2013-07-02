@@ -1,0 +1,157 @@
+<?php
+
+function partners_node_info() {
+    return array(
+        'partners' => array(
+            'name' => t('AIESEC Partners'),
+            'base' => 'partners',
+            'description' => t('Add AIESEC Partner.'),
+        ),
+    );
+}
+
+// FORM 
+function partners_form($node, &$form_state) {
+    $form['title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->title) ? $node->title : ''
+    );
+    $form['description'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Description'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->description) ? $node->description : ''
+    );
+
+
+    $form['partners_image'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'slider_image',
+        '#title' => t('Photo'),
+        '#size' => 40,
+        '#default_value' => !empty($node->image) ? $node->image : NULL,
+        '#description' => t("Image should be less than 400 pixels wide and in JPG format."),
+        '#upload_location' => 'public://partners',
+        '#required' => TRUE,
+        '#theme' => 'image_multifield_multitype'
+    );
+    return $form;
+}
+
+function partners_view($node) {
+    if ($node->type == "partners") {
+        $node->content['description'] = array(
+            '#markup' => '<p>' . $node->description . '</p>',
+            '#weight' => 4,
+        );
+        $variables = array(
+            'path' => image_style_url('partners', file_load($node->image)->uri),
+            'alt' => $node->title,
+            'title' => $node->title,
+            'attributes' => array('class' => 'img-polaroid', 'id' => $node->title),
+        );
+        $node->content['image'] = array(
+            '#markup' => theme('image', $variables) . '</p>',
+            '#weight' => 4,
+        );
+        return $node;
+    }
+}
+
+function partners_load($nodes) {
+
+    $result = db_select('partners', 'm')
+            ->fields('m')
+            ->condition('nid', array_keys($nodes), 'IN')
+            ->execute()
+            ->fetchAll();
+//    $result = db_query('SELECT * FROM {recipe} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+    foreach ($result as $record) {
+        $nodes[$record->nid]->description = $record->description;
+        $nodes[$record->nid]->image = $record->image;
+    }
+}
+
+//// CRUD
+function partners_insert($node) {
+    db_insert('partners')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                'image' => $node->partners_image
+            ))
+            ->execute();
+    $file = file_load($node->partners_image);
+    $file->status = FILE_STATUS_PERMANENT;
+    file_save($file);
+    file_usage_add($file, 'partners', 'image', $node->nid);
+
+    $node->path['alias'] = 'partners/' . $node->nid;
+}
+
+function partners_update($node) {
+    db_update('partners')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                'image' => $node->partners_image
+            ))
+            ->condition('nid', $node->nid)
+            ->execute();
+    
+    $file = file_load($node->partners_image);
+    $file->status = FILE_STATUS_PERMANENT;
+    file_save($file);
+    file_usage_add($file, 'partners', 'image', $node->nid);
+
+    $node->path['alias'] = 'partners/' . $node->nid;
+}
+
+function partners_delete($node) {
+    db_delete('partners')
+            ->condition('nid', $node->nid)
+            ->execute();
+}
+
+/// THEME 
+function partners_theme() {
+    return array(
+        'partners_block' => array(
+            'variables' => array(
+                'partners' => NULL,
+            ), 'template' => 'partners'
+        )
+    );
+}
+
+/// BLOCKS 
+function partners_block_info() {
+    $blocks = array();
+    $blocks['partners_block'] = array(
+        'info' => t('partners'),
+    );
+    return $blocks;
+}
+
+function partners_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'partners_block' :
+            $block['content'] = _display_partners();
+            break;
+    }
+
+    return $block;
+}
+
+function _display_partners() {
+    $query = db_select('partners', 'p');
+    $query->join('node', 'n', 'n.nid = p.nid');
+    $query->fields('p')->fields('n', array('title'));
+    $result = $query->execute()->fetchAll();
+    return theme('partners_block', array('partners' => $result));
+}
+

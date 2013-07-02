@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * Implementation of hook_install().
+ */
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function partners_uninstall() {
+    // Use schema API to delete database table.
+    // remove node revisions
+    db_query('DELETE FROM {node_revision} WHERE nid in (select nid from {node} WHERE type = :type)', array(':type' => 'partners'));
+
+    // remove variables
+    db_query('DELETE FROM {variable} WHERE name like :type', array(':type' => 'partners_%'));
+    image_style_delete(image_style_load('partners'));
+    drupal_uninstall_schema('partners');
+}
+
+function partners_install() {
+    $style = image_style_save(array('name' => 'partners'));
+    $effect = array(
+        'name' => 'image_scale_and_crop',
+        'data' => array(
+            'width' => 1000,
+            'height' => 360,
+            'upscale' => TRUE,
+        ),
+        'isid' => $style['isid'],
+    );
+    image_effect_save($effect);
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function partners_schema() {
+    $schema['partners'] = array(
+        'fields' => array(
+            'nid' => array(
+                'type' => 'int',
+                'unsigned' => TRUE,
+                'not null' => TRUE,
+            ),
+            'description' => array(
+                'type' => 'text',
+            ),
+            'image' => array(
+                'type' => 'text',
+                'size' => 'big'
+            ),
+        ),
+        'primary key' => array('nid'),
+    );
+    return $schema;
+}

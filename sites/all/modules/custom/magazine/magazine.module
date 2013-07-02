@@ -1,0 +1,342 @@
+<?php
+
+
+function magazine_enable() {
+
+    if (!field_info_field('magazine_tags')) {
+        $instance = array(
+            'field_name' => 'magazine_tags',
+            'entity_type' => 'node',
+            'label' => 'Category',
+            'bundle' => 'blog_post',
+            'required' => true,
+            'widget' => array(
+                'type' => 'taxonomy_autocomplete'
+            ),
+            'display' => array(
+                'default' => array('type' => 'hidden'),
+                'teaser' => array('type' => 'hidden')
+            )
+        );
+
+        field_create_instance($instance);
+    }
+}
+
+function magazine_node_info() {
+    return array(
+        'magazine' => array(
+            'name' => t('Post for The Magazine'),
+            'base' => 'magazine',
+            'description' => t('Add posts to The amagazine Section.'),
+        ),
+    );
+}
+
+function magazine_menu() {
+    $items['magazine'] = array(
+        'title' => t('Magazine'),
+        'page callback' => '_magazine_listing',
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM,
+        'menu_name' => 'main-menu',
+        'weight' => 7
+    );
+    return $items;
+}
+
+// FORM 
+function magazine_form($node, &$form_state) {
+    $form['title'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Title'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->title) ? $node->title : ''
+    );
+    $form['description'] = array(
+        '#type' => 'text_format',
+        '#title' => t('Description'),
+        '#required' => TRUE,
+        '#default_value' => !empty($node->description) ? $node->description : ''
+    );
+
+
+    $form['magazine_image'] = array(
+        '#type' => 'managed_file',
+        '#name' => 'magazine_image',
+        '#title' => t('Photo'),
+        '#default_value' => !empty($node->image) ? $node->image : NULL,
+        '#description' => t("Image should be less than 400 pixels wide and in JPG format."),
+        '#upload_location' => 'public://magazine/',
+        '#required' => TRUE
+    );
+    $format = 'Y-m-d';
+
+    $form['created_date'] = array(
+        '#type' => 'date_select', // types 'date_text' and 'date_timezone' are also supported. See .inc file.
+        '#title' => t('select a date'),
+        '#default_value' => !empty($node->date) ? $node->date : time(),
+        '#date_format' => $format,
+        '#date_label_position' => 'within',
+        '#date_year_range' => '-3:+3', // Optional, used to set the year range (back 3 years and forward 3 years is the default).
+    );
+
+    return $form;
+}
+
+function magazine_load($nodes) {
+
+    $result = db_select('magazine', 'm')
+            ->fields('m')
+            ->condition('nid', array_keys($nodes), 'IN')
+            ->execute()
+            ->fetchAll();
+    foreach ($result as $record) {
+        $nodes[$record->nid]->description = $record->description;
+        $nodes[$record->nid]->image = $record->image;
+        $nodes[$record->nid]->date = $record->date;
+    }
+}
+
+function magazine_view($node, $view_mode) {
+    if ($node->type == 'magazine') {
+
+
+
+
+        $node->content['title'] = array(
+            '#markup' => '<h1>' . $node->title . '</h1>',
+            '#weight' => 1,
+        );
+        $image = file_load($node->image);
+        $variables = array(
+            'path' => image_style_url('magazine', $image->uri),
+            'alt' => $node->title,
+            'title' => $node->title,
+            'attributes' => array('class' => 'img-polaroid', 'id' => $node->title),
+        );
+        $img = theme('image', $variables);
+        $node->content['magazine_image'] = array(
+            '#markup' => $img,
+            '#weight' => 1,
+        );
+        $node->content['description'] = array(
+            '#markup' => '<p>' . $node->description . '</p>',
+            '#weight' => 4,
+        );
+        $node->content['magazine_tags'] = array(
+            '#markup' => '<span class="icon-tags"></span>' . theme('magazine_tags', array('tags' => $node->magazine_tags[LANGUAGE_NONE])),
+            '#weight' => 4,
+        );
+        $node->content['related_content'] = get_related_posts($node->magazine_tags[LANGUAGE_NONE], $node->nid);
+
+
+        if (module_exists('users_types_field')) {
+            if (isset($node->users_type))
+                switch ($node->users_type[LANGUAGE_NONE][0]['value']) {
+                    case 1 :
+                        $user_type = '<span class="label label-success">' . t('Student') . '</span>';
+                        break;
+                    case 2:
+                        $user_type = '<span class="label label-info">' . t('Company') . '</span>';
+                        break;
+                    case 3 :
+                        $user_type = '<span class="label label-important">' . t('Alumni') . '</span>';
+                        break;
+                }
+            $node->content['user_type'] = array(
+                '#markup' => $user_type,
+                '#weight' => 4,
+            );
+        }
+    }
+    return $node;
+}
+
+//// CRUD
+function magazine_insert($node) {
+    db_insert('magazine')
+            ->fields(array(
+                'nid' => $node->nid,
+                'description' => $node->description['value'],
+                'image' => $node->magazine_image,
+                'date' => strtotime($node->created_date),
+            ))
+            ->execute();
+
+    $file = file_load($node->magazine_image);
+    $file->status = FILE_STATUS_PERMANENT;
+    file_save($file);
+    file_usage_add($file, 'user', 'user', $GLOBALS['user']->uid);
+    $node->path['alias'] = 'magazine/' . $node->nid;
+}
+
+function magazine_update($node) {
+    db_update('magazine')
+            ->fields(array(
+                'description' => $node->description['value'],
+                'image' => $node->magazine_image,
+                'date' => strtotime($node->created_date),
+            ))
+            ->condition('nid', $node->nid)
+            ->execute();
+
+    $node->path['alias'] = 'magazine/' . $node->nid;
+}
+
+function magazine_delete($node) {
+    db_delete('magazine')
+            ->condition('nid', $node->nid)
+            ->execute();
+}
+
+/// THEME 
+function magazine_theme() {
+    return array(
+        'magazine_tags' => array(
+            'variables' => array(
+                'tags' => NULL,
+            )
+        ),
+        'related_posts' => array(
+            'variables' => array(
+                'tags' => NULL,
+            )
+        ),
+        'latest_magazine_student' => array(
+            'variables' => array(
+                'latest_student' => NULL,
+            ), 'template' => 'latest-student'
+        ),
+        'latest_magazine_company' => array(
+            'variables' => array(
+                'latest_student' => NULL,
+            ), 'template' => 'latest-company'
+        ),
+        'latest_magazine_alumni' => array(
+            'variables' => array(
+                'latest_student' => NULL,
+            ), 'template' => 'latest-alumni'
+        )
+    );
+}
+
+function theme_magazine_tags($variables) {
+    $tags = $variables['tags'];
+    $output = '<ul>';
+    foreach ($tags as $single_tag) {
+        $output .='<li>' . taxonomy_term_load($single_tag['tid'])->name . '</li>';
+    }
+    $output .='</ul>';
+
+    return $output;
+}
+
+function get_related_posts($tags, $current_id) {
+    $nodes = array();
+    $output = '';
+    foreach ($tags as $single_tag) {
+        $matched_nids = taxonomy_select_nodes($single_tag['tid'], TRUE, 5);
+        //TODO : UNSET THE CURRENT POST.
+
+
+        $query = db_select('magazine', 'm');
+        $query->join('node', 'n', 'n.nid = m.nid');
+        $related_results = $query->fields('m')->fields('n', array('title'))
+                        ->condition('n.nid', $matched_nids, 'IN')
+                        ->condition('n.nid', $current_id, '<>')->execute()->fetchAllAssoc('nid');
+        $related_posts = array();
+        foreach ($related_results as $nid => $element) {
+            $related_posts[$nid]['nid'] = $element->nid;
+            $related_posts[$nid]['title'] = $element->title;
+            $related_posts[$nid]['image'] = image_style_url('thumbnail', file_load($element->image)->uri);
+            $related_posts[$nid]['description'] = $element->description;
+        }
+    }
+    return $related_posts;
+}
+
+/// BLOCKS 
+function magazine_block_info() {
+    $blocks = array();
+    $blocks['latest_magazine_students'] = array(
+        'info' => t('Latest Magazoine Stdeunts'),
+    );
+    $blocks['latest_magazine_alumni'] = array(
+        'info' => t('Latest Magazine Alumni'),
+    );
+    $blocks['latest_magazine_company'] = array(
+        'info' => t('Latest Magazine Company'),
+    );
+    $blocks['magazine_related'] = array(
+        'info' => t('Related Magazines'),
+    );
+    return $blocks;
+}
+
+function magazine_block_view($delta = '') {
+    $block = array();
+
+    switch ($delta) {
+        case 'latest_magazine_students' :
+            $block['content'] = _display_latest_magazine_posts(1);
+            break;
+        case 'latest_magazine_company' :
+            $block['content'] = _display_latest_magazine_posts(2);
+            break;
+
+        case 'latest_magazine_alumni' :
+            $block['content'] = _display_latest_magazine_posts(3);
+            break;
+
+        case 'magazine_related' :
+            $block['content'] = _display_related_magazines();
+            break;
+    }
+
+    return $block;
+}
+
+function _display_latest_magazine_posts($type) {
+
+    $query = new EntityFieldQuery;
+    $result_nodes = $query->entityCondition('entity_type', 'node')
+                    ->entityCondition('bundle', 'magazine')
+                    ->fieldCondition('users_type', 'value', $type)->execute();
+
+    if (isset($result_nodes['node'])) {
+        $nids = array_keys($result_nodes['node']);
+        $query = db_select('magazine', 'm');
+        $query->join('node', 'n', 'n.nid = m.nid');
+        $query->fields('m')->condition('n.nid', $nids, 'IN')->fields('n', array('title'));
+        $result = $query->execute()->fetchAll();
+    } else {
+        $result = array();
+    }
+    switch ($type) {
+        case 1: //student
+            return theme('latest_magazine_student', array('latest_student' => $result));
+            break;
+
+        case 2://Company
+            return theme('latest_magazine_company', array('latest_company' => $result));
+            break;
+        case 3://Alumni
+            return theme('latest_magazine_alumni', array('latest_alumni' => $result));
+            break;
+    }
+}
+
+function _magazine_listing() {
+    $query = db_select('node', 'n')->extend('PagerDefault');
+    $query->join('magazine', 'm', 'm.nid = n.nid');
+    $query->fields('n', array('title'))->fields('m')->extend('PagerDefault')->limit(5);
+    $results = $query->execute()->fetchAll();
+    $output = '';
+    foreach ($results as $single_result) {
+        $rendered_area = node_view(node_load($single_result->nid), 'teaser');
+        $output .= drupal_render($rendered_area);
+    }
+    return $output;
+}
+

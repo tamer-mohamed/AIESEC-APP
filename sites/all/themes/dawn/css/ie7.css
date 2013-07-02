@@ -1,0 +1,57 @@
+
+h3.service {
+	width: 100%;
+}
+
+.service p.teaser {
+	padding-bottom: 20px;
+}
+
+#footer .tag-cloud ul li {
+	display: inline;
+	padding-bottom: 5px;
+}
+
+.copyright p {
+	padding-bottom: 20px;
+}
+
+.date {
+	display: inline-block;
+	text-align: center;
+	width: 52px;
+}
+
+.day {
+	width: 52px;
+	display: inline-block;
+}
+
+#simplenews-wrap {
+	height: 290px;
+}
+#simplenews-wrap .fieldset-description {
+	display: none;
+}
+
+#prescript .heading h2, #main .heading h2, #postscript .heading h2, #comments .title { padding-bottom: 10px; }
+
+ul.post-meta li {
+	padding-bottom: 10px;
+}
+
+.masthead .divider {
+bottom: -25px;	
+}
+
+.breadcrumb {
+	margin-bottom: 7px;
+}
+
+.front .our-process {
+	height: 270px;
+}
+
+#user-login h3, #account-options h3, #simplenews-wrap .modal-header {
+	margin-top: -20px;
+}

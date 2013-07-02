@@ -1,0 +1,21 @@
+<?php
+
+function users_types_field_install() {
+    if (!field_info_field('users_type')) {
+        $field = array(
+            'field_name' => 'users_type',
+            'type' => 'list_text',
+            'settings' => array('allowed_values_function' => '_users_types_get_users_types'),
+        );
+        field_create_field($field);
+    }
+}
+
+/**
+ * uninstall lc field module
+ */
+function users_types_field_uninstall() {
+    field_delete_field('users_type');
+}
+
+?>

@@ -1,0 +1,113 @@
+<?php
+
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function lc_managepage_menu() {
+    return array(
+        'user/%user/page' => array(
+            'title' => 'Manage Lc Page',
+            'type' => MENU_LOCAL_TASK,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_managepage_form'),
+            'access arguments' => array('edit lcs'),
+            'file' => 'lcs.page.inc',
+        ),
+        'user/%user/page/manage' => array(
+            'title' => 'Manage Lc Page',
+            'type' => MENU_DEFAULT_LOCAL_TASK,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_managepage_form'),
+            'access arguments' => array('edit lcs'),
+            'file' => 'lcs.page.inc',
+        ),
+        'user/%user/page/manage-partner' => array(
+            'title' => 'Manage Partners ',
+            'type' => MENU_LOCAL_TASK,
+            'page callback' => '_partners_get_data',
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'partners.page.inc',
+        ),
+        'user/%user/page/manage-team' => array(
+            'title' => 'Manage Team ',
+            'type' => MENU_LOCAL_TASK,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_lc_managepage_form'),
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'lcs.page.inc',
+        ),
+        'user/%user/page/manage-news' => array(
+            'title' => 'Manage News ',
+            'type' => MENU_LOCAL_TASK,
+            'page callback' => '_news_get_data',
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'news.page.inc',
+        ),
+        'user/%user/page/manage-news/add' => array(
+            'title' => 'Add News ',
+            'type' => MENU_LOCAL_ACTION,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_news_admin_add'),
+            'access arguments' => array('add lcs news'),
+            'file' => 'news.page.inc',
+        ),
+        'manage-news/edit/%' => array(
+            'title' => 'Edit News ',
+            'type' => MENU_CALLBACK,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_news_admin_edit',2),
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'news.page.inc',
+        ),
+        'manage-news/delete/%' => array(
+            'title' => 'Delete News ',
+            'type' => MENU_CALLBACK,
+            'page callback' => 'drupal_get_form',
+            'page arguments' => array('_news_admin_delete_confirm',2),
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'news.page.inc',
+        ),
+        'lc/%' => array(
+            'title' => 'Lc Page',
+            'type' => MENU_CALLBACK,
+            'page callback' => '_get_lc_by_id',
+            'page arguments' => array(1),
+            'access arguments' => array('edit lcs partners'),
+            'file' => 'mainPage.page.inc',
+        ),
+    );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function lc_managepage_theme() {
+    return array(
+        'image_multifield_multitype' => array(
+            'render element' => 'element',
+        ),
+        'theming_lc_page' => array(
+            'arguments' => array('lc' => null,'fbWall' => null),
+            'template' => 'lc',
+        ),
+    );
+}
+
+function theme_image_multifield_multitype($variables) {
+    $element = $variables['element'];
+
+    if (isset($element['#file']->uri)) {
+        $output = '<div id="edit-' . $element['#name'] . '-ajax-wrapper">
+                    <div class="form-item form-type-managed-file form-item-logo">
+                    <span class="file">';
+        $output .= '    <img style="width:100px" src="' . file_create_url($element['#file']->uri) . '" />';
+        $output .= '</span>
+                    <input type="submit" id="edit-' . $element['#name'] . '-remove-button" name="' . $element['#name'] . '_remove_button" value="Remove" class="btn btn-primary btn-danger form-submit ajax-processed" style="margin-left:50px">';
+        $output .= '<input type="hidden" name="' . $element['#name'] . '[fid]" value="' . $element['#file']->fid . '"></div></div>';
+
+        return $output;
+    }
+}
+?>
