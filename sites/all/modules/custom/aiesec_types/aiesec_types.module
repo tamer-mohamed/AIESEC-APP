@@ -1,0 +1,28 @@
+<?php
+
+function aiesec_types_menu() {
+    return array(
+        'youth' => array(
+            'title' => t('Youth'),
+            'description' => 'Configure Lcs Management.',
+            'weight' => -30,
+            'page callback' => '_lc_management_admin',
+            'access arguments' => array('access content'),
+        ),
+        'corporate' => array(
+            'title' => t('Corporate'),
+            'description' => 'Configure Lcs Management.',
+            'weight' => -30,
+            'page callback' => '_lc_management_admin',
+            'access arguments' => array('access content'),
+        ),
+        'alumni' => array(
+            'title' => t('Alumni'),
+            'description' => 'Configure Lcs Management.',
+            'weight' => -30,
+            'page callback' => '_lc_management_admin',
+            'access arguments' => array('access content'),
+        )
+    );
+}
+
