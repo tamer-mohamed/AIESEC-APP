@@ -1,7 +1,41 @@
 <?php
 
+module_load_include('inc', 'lc_management', 'lcs.admin');
+function lc_management_block_info() {
+    return array(
+        'lc' => array(
+            'info' => t('Lc DropDown')
+        )
+    );
+}
+
+function lc_management_block_view($delta = '') {
+    switch ($delta) {
+        case 'lc':
+            $block['subject'] = t('Lc Names');
+            $block['content'] = lc_management_BLOCK_FUNCTION_ITEMS();
+            break;
+    }
+    
+    return $block;
+}
+
+function lc_management_BLOCK_FUNCTION_ITEMS() {
+    $items = _lc_management_get_lcs('',true,true);
+    return theme('lc_management_BLOCK_FUNCTION_ITEMS', array('items' => $items));
+}
+
+function lc_management_theme() {
+    return array(
+        'lc_management_BLOCK_FUNCTION_ITEMS' => array(
+            'template' => 'lc_management_block',
+            'variables' => array('items' => NULL,)
+        )
+    );
+}
+
 function lc_management_menu() {
-    return array( 
+    return array(
         'admin/config/lcs' => array(
             'title' => 'Manage Lcs',
             'description' => 'Configure Lcs Management.',
@@ -32,7 +66,7 @@ function lc_management_menu() {
             'title' => 'delete Lc',
             'description' => 'Allows admins to delete lcs',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_lc_management_admin_delete_confirm',4),
+            'page arguments' => array('_lc_management_admin_delete_confirm', 4),
             'access arguments' => array('delete lcs'),
             'file' => 'lcs.admin.inc',
             'weight' => -10,
@@ -41,12 +75,11 @@ function lc_management_menu() {
             'title' => 'Edit Lc',
             'description' => 'Allows admins to edit lcs',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_lc_management_admin_edit',4),
+            'page arguments' => array('_lc_management_admin_edit', 4),
             'access arguments' => array('edit lcs'),
             'file' => 'lcs.admin.inc',
             'weight' => -10,
         ),
-        
         'admin/config/lcs/managecity' => array(
             'title' => 'Manage City',
             'description' => 'Allows admins to manage Cities',
@@ -69,7 +102,7 @@ function lc_management_menu() {
             'title' => 'delete City',
             'description' => 'Allows admins to delete city',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_city_management_admin_delete_confirm',4),
+            'page arguments' => array('_city_management_admin_delete_confirm', 4),
             'access arguments' => array('delete cities'),
             'file' => 'city.admin.inc',
             'weight' => -10,
@@ -78,7 +111,7 @@ function lc_management_menu() {
             'title' => 'Edit City',
             'description' => 'Allows admins to edit city',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_city_management_admin_edit',4),
+            'page arguments' => array('_city_management_admin_edit', 4),
             'access arguments' => array('edit cities'),
             'file' => 'city.admin.inc',
             'weight' => -10,
@@ -105,7 +138,7 @@ function lc_management_menu() {
             'title' => 'delete university',
             'description' => 'Allows admins to delete university',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_university_management_admin_delete_confirm',4),
+            'page arguments' => array('_university_management_admin_delete_confirm', 4),
             'access arguments' => array('delete universities'),
             'file' => 'university.admin.inc',
             'weight' => -10,
@@ -114,7 +147,7 @@ function lc_management_menu() {
             'title' => 'Edit university',
             'description' => 'Allows admins to edit university',
             'page callback' => 'drupal_get_form',
-            'page arguments' => array('_university_management_admin_edit',4),
+            'page arguments' => array('_university_management_admin_edit', 4),
             'access arguments' => array('edit universities'),
             'file' => 'university.admin.inc',
             'weight' => -10,

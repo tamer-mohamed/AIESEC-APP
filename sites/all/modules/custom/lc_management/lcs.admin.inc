@@ -24,6 +24,18 @@ function _lc_management_admin_add($form, &$form_submit) {
         '#options' => array('0' => 'Deacivated', '1' => 'Activated'),
         '#description' => t('Select status of lc.'),
     );
+    $form['city'] = array(
+        '#title' => t('Activation'),
+        '#type' => 'select',
+        '#options' => array('0' => 'Deacivated', '1' => 'Activated'),
+        '#description' => t('Select city of lc.'),
+    );
+    $form['university'] = array(
+        '#title' => t('Activation'),
+        '#type' => 'select',
+        '#options' => array('0' => 'Deacivated', '1' => 'Activated'),
+        '#description' => t('Select university of lc.'),
+    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => 'Submit',
@@ -51,7 +63,7 @@ function _lc_management_admin_add_submit($form, &$form_state) {
     drupal_goto("admin/config/lcs/manage");
 }
 
-function _lc_management_admin_edit($form, &$form_submit,$id){
+function _lc_management_admin_edit($form, &$form_submit, $id) {
     $lc = _lc_management_get_lcs($id);
     $form['name'] = array(
         '#title' => t('Lc Name'),
@@ -92,6 +104,7 @@ function _lc_management_admin_edit_submit($form, &$form_state) {
     drupal_set_message('The lc has been edited succesfully');
     drupal_goto("admin/config/lcs/manage");
 }
+
 /**
  * confirm delete lc form
  * 
@@ -138,16 +151,20 @@ function _lc_management_admin_delete($id) {
  * 
  * @return type
  */
-function _lc_management_get_lcs($id = '') {
-    if($id != '')
-    {
-        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc where id = :id',array(':id' => $id));
+function _lc_management_get_lcs($id = '',$noTheme = false,$activatedOnly = false) {
+    if ($id != '') {
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc where id = :id', array(':id' => $id));
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc');
+    if($activatedOnly)
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc where lc.activated = 1');
+    else
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc');
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
+        if($noTheme)
+             $rows[$i]['id'] = $record['id'];
         $rows[$i]['name'] = $record['name'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
         $rows[$i]['activated'] = $record['activated'] == 0 ? 'Deacivated' : 'Activated';
@@ -156,6 +173,8 @@ function _lc_management_get_lcs($id = '') {
 
         $i++;
     }
+    if($noTheme)
+        return $rows;
     $header = array(t('Name'), t('Created'), t('Active'), t('Edit'), t('Delete'));
     $output = theme('table', array('header' => $header, 'rows' => $rows));
     return $output;
