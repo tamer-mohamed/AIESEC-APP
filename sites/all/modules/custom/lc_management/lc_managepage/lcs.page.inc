@@ -20,7 +20,6 @@ function _lc_managepage_form($form, &$form_submit) {
     }
     else
         $data = array();
-
     $form['bg'] = array(
         '#title' => t('Background Image'),
         '#type' => 'managed_file',
@@ -104,6 +103,18 @@ function _lc_managepage_form_submit($form, &$form_state) {
         'twitter' => $form_state['values']['twitter'],
         'youtube' => $form_state['values']['youtube']
     );
+    /*
+      if ($form_state['values']['bg'] > 0) {
+      $file = file_load($form_state['values']['bg']);
+      $file->status = 1;
+      file_save($file);
+      }
+
+      if ($form_state['values']['logo'] > 0) {
+      $file2 = file_load($form_state['values']['logo']);
+      $file2->status = 1;
+      file_save($file2);
+      } */
 
     if ($form_state['values']['exist']) {
         unset($data['created']);
@@ -119,4 +130,12 @@ function _lc_managepage_form_submit($form, &$form_state) {
     drupal_set_message('Settings has been saved succesfully');
 }
 
+/*
+ * Page call function for lcs analytic
+ */
+function _lc_stats_call(){
+   drupal_add_js('https://www.google.com/jsapi', 'external');
+   drupal_add_js(drupal_get_path('module', 'lc_managepage') .'/js/chart.js', 'file');
+    return '<div id="chart_div"></div>';
+}
 ?>

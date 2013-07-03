@@ -9,15 +9,23 @@
  */
 function _partners_admin_add($form, &$form_submit) {
     $form['title'] = array(
-        '#title' => t('News Title'),
+        '#title' => t('partners Title'),
         '#type' => 'textfield',
         '#required' => TRUE,
         '#description' => t('title of the partners.'),
     );
+    $form['url'] = array(
+        '#title' => t('partners url'),
+        '#type' => 'textfield',
+        '#required' => FALSE,
+        '#description' => t('url of the partners.'),
+    );
     $form['img'] = array(
         '#title' => t('Image'),
-        '#type' => 'file',
+        '#type' => 'managed_file',
         '#description' => t('Image of partners.'),
+        '#upload_location' => 'public://lc_partners_images/',
+        '#theme' => 'image_multifield_multitype'
     );
     $form['description'] = array(
         '#title' => t('Description'),
@@ -38,39 +46,47 @@ function _partners_admin_add($form, &$form_submit) {
  * @param type $form_state
  */
 function _partners_admin_add_submit($form, &$form_state) {
+
     global $user;
+    $user = user_load($user->uid);
+    $lc = $user->lc_field['und'][0]['value'];
+
     $validators = array(
         'file_validate_extensions' => array('jpg png gif'),
     );
-
-    if ($file = file_save_upload('img', $validators, 'public://lc_partners_images/')) {
-        $file_content = file_get_contents($file->uri);
-        $img = $file->uri;
-        $title = $form_state['values']['title'];
-        $desc = $form_state['values']['description']['value'];
-        db_insert('partners')
-                ->fields(array(
-                    'title' => $title,
-                    'img' => $img,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                ))
-                ->execute();
-        drupal_set_message('The partners has been added succesfully');
-        drupal_goto("user/$user->uid/page/manage-partners");
-    } else {
-        form_set_error('Image', 'Could not upload file.');
-    }
+    $url = $form_state['values']['url'];
+    $img = $form_state['values']['img'];
+    $title = $form_state['values']['title'];
+    $desc = $form_state['values']['description']['value'];
+    db_insert('partner')
+            ->fields(array(
+                'title' => $title,
+                'img' => $img,
+                'description' => $desc,
+                'created' => REQUEST_TIME,
+                'url' => $url,
+                'lc_id' => $lc
+            ))
+            ->execute();
+    drupal_set_message('The partners has been added succesfully');
+    drupal_goto("user/$user->uid/page/manage-partner");
 }
 
 function _partners_admin_edit($form, &$form_submit, $id) {
     $partners = _partners_get_data($id);
     $form['title'] = array(
-        '#title' => t('News Title'),
+        '#title' => t('partners Title'),
         '#type' => 'textfield',
         '#required' => TRUE,
         '#default_value' => $partners['title'] != '' ? $partners['title'] : '',
         '#description' => t('title of the partners.'),
+    );
+    $form['url'] = array(
+        '#title' => t('partners url'),
+        '#type' => 'textfield',
+        '#required' => FALSE,
+        '#description' => t('url of the partners.'),
+        '#default_value' => $partners['url'] != '' ? $partners['url'] : ''
     );
     $form['id'] = array(
         '#title' => t('id'),
@@ -80,11 +96,12 @@ function _partners_admin_edit($form, &$form_submit, $id) {
     );
     $form['img'] = array(
         '#title' => t('Image'),
-        '#type' => 'file',
+        '#type' => 'managed_file',
         '#description' => t('Image of partners.'),
+        '#default_value' => isset($partners['img']) ? $partners['img'] : '',
+        '#upload_location' => 'public://lc_partners_images/',
+        '#theme' => 'image_multifield_multitype'
     );
-    if ($form['img'] != '')
-        $form['img']['#suffix'] = '<div class="imagePreviewLc"><img src="' . file_create_url($partners['img']) . '" width="50" class="imagePreviewLc"/></div>';
 
     $form['description'] = array(
         '#title' => t('Description'),
@@ -104,34 +121,24 @@ function _partners_admin_edit_submit($form, &$form_state) {
     $validators = array(
         'file_validate_extensions' => array('jpg png gif'),
     );
-
+    $url = $form_state['values']['url'];
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
-    if ($file = file_save_upload('img', $validators, 'public://lc_partners_images/')) {
-        $file_content = file_get_contents($file->uri);
-        $img = $file->uri;
-        db_update('partners')
-                ->fields(array(
-                    'title' => $title,
-                    'img' => $img,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                ))
-                ->condition('id', $form_state['values']['id'])
-                ->execute();
-    } else {
-        db_update('partners')
-                ->fields(array(
-                    'title' => $title,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                ))
-                ->condition('id', $form_state['values']['id'])
-                ->execute();
-    }
+    $img = $form_state['values']['img'];
+    db_update('partner')
+            ->fields(array(
+                'title' => $title,
+                'img' => $img,
+                'url' => $url,
+                'description' => $desc,
+                'created' => REQUEST_TIME,
+            ))
+            ->condition('id', $form_state['values']['id'])
+            ->execute();
+
 
     drupal_set_message('The partners has been edited succesfully');
-    drupal_goto("user/$user->uid/page/manage-partners");
+    drupal_goto("user/$user->uid/page/manage-partner");
 }
 
 /**
@@ -157,11 +164,11 @@ function _partners_admin_delete_confirm_submit($form, &$form_state) {
     global $user;
     if ($form_state['values']['confirm']) {
         _partners_admin_delete($form_state['values']['id']);
-        drupal_set_message('News has been deleted succesfully');
+        drupal_set_message('partners has been deleted succesfully');
         $form_values = $form_state['values'];
     }
 
-    drupal_goto("user/$user->uid/page/manage-partners");
+    drupal_goto("user/$user->uid/page/manage-partner");
 }
 
 /**
@@ -170,7 +177,7 @@ function _partners_admin_delete_confirm_submit($form, &$form_state) {
  * @param type $id
  */
 function _partners_admin_delete($id) {
-    db_delete('partners')
+    db_delete('partner')
             ->condition('id', $id)
             ->execute();
 }
@@ -182,24 +189,33 @@ function _partners_admin_delete($id) {
  */
 function _partners_get_data($id = '') {
     global $user;
+    $user = user_load($user->uid);
+    $lc = $user->lc_field['und'][0]['value'];
     if ($id != '') {
-        $result = db_query('SELECT partners.id, partners.title, partners.created, partners.img,partners.description FROM partner where id = :id', array(':id' => $id));    
+        $result = db_select('partner', 'p')
+                ->fields('p', array('id', 'title', 'created', 'img', 'description','url'))
+                ->condition('id', $id)
+                ->execute();
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT partners.id, partners.title, partners.created, partners.img,partners.description FROM partner');
+     $result = db_select('partner', 'p')
+                ->fields('p', array('id', 'title', 'created', 'img', 'description','url'))
+                ->condition('lc_id', $lc)
+                ->execute();
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['title'] = $record['title'];
-        $rows[$i]['img'] = "<img width='50' src='" . file_create_url($record['img']) . "' />";
+        $rows[$i]['url'] = $record['url'];
+        $rows[$i]['img'] = "<img width='50' src='" . file_create_url(file_load($record['img'])->uri) . "' />";
         $rows[$i]['description'] = mb_substr($record['description'], 0, 50) . "....";
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
-        $rows[$i]['edit'] = l('Edit', 'manage-partners/edit/' . $record['id']);
-        $rows[$i]['delete'] = l('Delete', 'manage-partners/delete/' . $record['id']);
+        $rows[$i]['edit'] = l('Edit', 'manage-partner/edit/' . $record['id']);
+        $rows[$i]['delete'] = l('Delete', 'manage-partner/delete/' . $record['id'], array('attributes' => array('class' => 'btn-danger btn')));
 
         $i++;
     }
-    $header = array(t('title'), t('img'), t('description'), t('Created'), t('Edit'), t('Delete'));
+    $header = array(t('title'),t('url'), t('img'), t('description'), t('Created'), t('Edit'), t('Delete'));
     $output = theme('table', array('header' => $header, 'rows' => $rows));
     return $output;
 }

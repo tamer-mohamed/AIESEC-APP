@@ -16,8 +16,10 @@ function _news_admin_add($form, &$form_submit) {
     );
     $form['img'] = array(
         '#title' => t('Image'),
-        '#type' => 'file',
+        '#type' => 'managed_file',
         '#description' => t('Image of news.'),
+        '#upload_location' => 'public://lc_news_images/',
+        '#theme' => 'image_multifield_multitype'
     );
     $form['description'] = array(
         '#title' => t('Description'),
@@ -46,26 +48,20 @@ function _news_admin_add_submit($form, &$form_state) {
     $validators = array(
         'file_validate_extensions' => array('jpg png gif'),
     );
-
-    if ($file = file_save_upload('img', $validators, 'public://lc_news_images/')) {
-        $file_content = file_get_contents($file->uri);
-        $img = $file->uri;
-        $title = $form_state['values']['title'];
-        $desc = $form_state['values']['description']['value'];
-        db_insert('news')
-                ->fields(array(
-                    'title' => $title,
-                    'img' => $img,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                    'lc_id' => $lc
-                ))
-                ->execute();
-        drupal_set_message('The news has been added succesfully');
-        drupal_goto("user/$user->uid/page/manage-news");
-    } else {
-        form_set_error('Image', 'Could not upload file.');
-    }
+    $img = $form_state['values']['img'];
+    $title = $form_state['values']['title'];
+    $desc = $form_state['values']['description']['value'];
+    db_insert('news')
+            ->fields(array(
+                'title' => $title,
+                'img' => $img,
+                'description' => $desc,
+                'created' => REQUEST_TIME,
+                'lc_id' => $lc
+            ))
+            ->execute();
+    drupal_set_message('The news has been added succesfully');
+    drupal_goto("user/$user->uid/page/manage-news");
 }
 
 function _news_admin_edit($form, &$form_submit, $id) {
@@ -85,11 +81,12 @@ function _news_admin_edit($form, &$form_submit, $id) {
     );
     $form['img'] = array(
         '#title' => t('Image'),
-        '#type' => 'file',
+        '#type' => 'managed_file',
         '#description' => t('Image of news.'),
+        '#default_value' => isset($news['img']) ? $news['img'] : '',
+        '#upload_location' => 'public://lc_news_images/',
+        '#theme' => 'image_multifield_multitype'
     );
-    if ($form['img'] != '')
-        $form['img']['#suffix'] = '<div class="imagePreviewLc"><img src="' . file_create_url($news['img']) . '" width="50" class="imagePreviewLc"/></div>';
 
     $form['description'] = array(
         '#title' => t('Description'),
@@ -112,28 +109,17 @@ function _news_admin_edit_submit($form, &$form_state) {
 
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
-    if ($file = file_save_upload('img', $validators, 'public://lc_news_images/')) {
-        $file_content = file_get_contents($file->uri);
-        $img = $file->uri;
-        db_update('news')
-                ->fields(array(
-                    'title' => $title,
-                    'img' => $img,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                ))
-                ->condition('id', $form_state['values']['id'])
-                ->execute();
-    } else {
-        db_update('news')
-                ->fields(array(
-                    'title' => $title,
-                    'description' => $desc,
-                    'created' => REQUEST_TIME,
-                ))
-                ->condition('id', $form_state['values']['id'])
-                ->execute();
-    }
+    $img = $form_state['values']['img'];
+    db_update('news')
+            ->fields(array(
+                'title' => $title,
+                'img' => $img,
+                'description' => $desc,
+                'created' => REQUEST_TIME,
+            ))
+            ->condition('id', $form_state['values']['id'])
+            ->execute();
+
 
     drupal_set_message('The news has been edited succesfully');
     drupal_goto("user/$user->uid/page/manage-news");
@@ -190,15 +176,22 @@ function _news_get_data($id = '') {
     $user = user_load($user->uid);
     $lc = $user->lc_field['und'][0]['value'];
     if ($id != '') {
-        $result = db_query('SELECT news.id, news.title, news.created, news.img,news.description FROM news where id = :id', array(':id' => $id));
+        $result = db_select('news', 'n')
+                ->fields('n', array('id', 'title', 'created', 'img', 'description'))
+                ->condition('id', $id)
+                ->execute();
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT news.id, news.title, news.created, news.img,news.description FROM news where lc_id = :lc',array(':lc' => $lc));
+
+    $result = db_select('news', 'n')
+            ->fields('n', array('id', 'title', 'created', 'img', 'description'))
+            ->condition('lc_id', $lc)
+            ->execute();
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['title'] = $record['title'];
-        $rows[$i]['img'] = "<img width='50' src='" . file_create_url($record['img']) . "' />";
+        $rows[$i]['img'] = "<img width='50' src='" . file_create_url(file_load($record['img'])->uri) . "' />";
         $rows[$i]['description'] = mb_substr($record['description'], 0, 50) . "....";
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
         $rows[$i]['edit'] = l('Edit', 'manage-news/edit/' . $record['id']);
