@@ -56,7 +56,7 @@ function _city_management_admin_add_submit($form, &$form_state) {
             ))
             ->execute();
     drupal_set_message('The city has been added succesfully');
-    drupal_goto("admin/config/citys/manage");
+    drupal_goto("admin/config/lcs/managecity");
 }
 
 function _city_management_admin_edit($form, &$form_submit, $id) {
@@ -73,7 +73,7 @@ function _city_management_admin_edit($form, &$form_submit, $id) {
         '#type' => 'textfield',
         '#required' => TRUE,
         '#description' => t('long of the city.'),
-        '#default_value' => $city['long'],
+        '#default_value' => $city['longitude'],
     );
     $form['lat'] = array(
         '#title' => t('city latidude'),
@@ -107,7 +107,7 @@ function _city_management_admin_edit_submit($form, &$form_state) {
             ->condition('id', $form_state['values']['id'])
             ->execute();
     drupal_set_message('The city has been edited succesfully');
-    drupal_goto("admin/config/citys/manage");
+    drupal_goto("admin/config/lcs/managecity");
 }
 
 /**

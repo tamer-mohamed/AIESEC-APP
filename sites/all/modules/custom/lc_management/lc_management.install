@@ -25,15 +25,22 @@ function lc_management_schema() {
                     'not null' => TRUE,
                     'default' => 0,
                 ),
-                'activated' => array(
-                    'description' => 'The status of activation.',
+                'city' => array(
+                    'description' => 'The city of lc.',
                     'type' => 'int',
                     'unsigned' => TRUE,
                     'not null' => TRUE,
                     'default' => 0,
                 ),
-                'uniid' => array(
-                    'description' => 'The university id.',
+                'university' => array(
+                    'description' => 'The university of lc.',
+                    'type' => 'int',
+                    'unsigned' => TRUE,
+                    'not null' => TRUE,
+                    'default' => 0,
+                ),
+                'activated' => array(
+                    'description' => 'The status of activation.',
                     'type' => 'int',
                     'unsigned' => TRUE,
                     'not null' => TRUE,
