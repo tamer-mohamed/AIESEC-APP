@@ -177,7 +177,14 @@ function lc_management_permission() {
             'description' => t('Perform Delete administration tasks for lcs.'),
             'restrict access' => TRUE,
         ),
+        'administer lcs page' => array(
+            'title' => t('administer lcs page'),
+            'description' => t('Perform Delete administration tasks for lc page.'),
+            'restrict access' => TRUE,
+        ),
     );
 }
+
+
 
 ?>

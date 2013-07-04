@@ -12,7 +12,7 @@ function lc_managepage_menu() {
             'type' => MENU_LOCAL_TASK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_lc_managepage_form'),
-            'access arguments' => array('edit lcs'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'lcs.page.inc',
         ),
         'user/%user/page/manage' => array(
@@ -20,14 +20,14 @@ function lc_managepage_menu() {
             'type' => MENU_DEFAULT_LOCAL_TASK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_lc_managepage_form'),
-            'access arguments' => array('edit lcs'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'lcs.page.inc',
         ),
         'user/%user/page/manage-partner' => array(
             'title' => 'Manage Partners ',
             'type' => MENU_LOCAL_TASK,
             'page callback' => '_partners_get_data',
-            'access arguments' => array('manage partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'partners.page.inc',
         ),
         'user/%user/page/manage-partner/add' => array(
@@ -35,7 +35,7 @@ function lc_managepage_menu() {
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_partners_admin_add'),
-            'access arguments' => array('add partner news'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'partners.page.inc',
         ),
         'manage-partner/edit/%' => array(
@@ -43,7 +43,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_partners_admin_edit',2),
-            'access arguments' => array('edit partner partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'partners.page.inc',
         ),
         'manage-partner/delete/%' => array(
@@ -51,7 +51,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_partners_admin_delete_confirm',2),
-            'access arguments' => array('delete partner partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'partners.page.inc',
         ),
         
@@ -59,7 +59,7 @@ function lc_managepage_menu() {
             'title' => 'Manage News ',
             'type' => MENU_LOCAL_TASK,
             'page callback' => '_news_get_data',
-            'access arguments' => array('edit lcs partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'news.page.inc',
         ),
         'user/%user/page/manage-news/add' => array(
@@ -67,7 +67,7 @@ function lc_managepage_menu() {
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_news_admin_add'),
-            'access arguments' => array('add lcs news'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'news.page.inc',
         ),
         'manage-news/edit/%' => array(
@@ -75,7 +75,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_news_admin_edit',2),
-            'access arguments' => array('edit lcs partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'news.page.inc',
         ),
         'manage-news/delete/%' => array(
@@ -83,7 +83,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_news_admin_delete_confirm',2),
-            'access arguments' => array('delete lcs news'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'news.page.inc',
         ),
         'lc/%' => array(
@@ -91,14 +91,14 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => '_get_lc_by_id',
             'page arguments' => array(1),
-            'access arguments' => array('edit lcs partners'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'mainPage.page.inc',
         ),
         'user/%user/page/manage-team' => array(
             'title' => 'Manage Team ',
             'type' => MENU_LOCAL_TASK,
             'page callback' => '_teams_get_data',
-            'access arguments' => array('manage team'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'teams.page.inc',
         ),
         'user/%user/page/manage-team/add' => array(
@@ -106,7 +106,7 @@ function lc_managepage_menu() {
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_teams_admin_add'),
-            'access arguments' => array('add team'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'teams.page.inc',
         ),
         'manage-team/edit/%' => array(
@@ -114,7 +114,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_teams_admin_edit',2),
-            'access arguments' => array('edit team'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'teams.page.inc',
         ),
         'manage-team/delete/%' => array(
@@ -122,14 +122,14 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_teams_admin_delete_confirm',2),
-            'access arguments' => array('delete team'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'teams.page.inc',
         ),
         'user/%user/page/manage-tab' => array(
             'title' => 'Manage Tab ',
             'type' => MENU_LOCAL_TASK,
             'page callback' => '_tabs_get_data',
-            'access arguments' => array('manage tab'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'tabs.page.inc',
         ),
         'user/%user/page/manage-tab/add' => array(
@@ -137,7 +137,7 @@ function lc_managepage_menu() {
             'type' => MENU_LOCAL_ACTION,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_tabs_admin_add'),
-            'access arguments' => array('add tab'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'tabs.page.inc',
         ),
         'manage-tab/edit/%' => array(
@@ -145,7 +145,7 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_tabs_admin_edit',2),
-            'access arguments' => array('edit tab'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'tabs.page.inc',
         ),
         'manage-tab/delete/%' => array(
@@ -153,14 +153,14 @@ function lc_managepage_menu() {
             'type' => MENU_CALLBACK,
             'page callback' => 'drupal_get_form',
             'page arguments' => array('_tabs_admin_delete_confirm',2),
-            'access arguments' => array('delete tab'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'tabs.page.inc',
         ),
         'admin/config/lcs/stats' => array(
             'title' => 'Lcs Analytic',
             'description' => 'Allows admins to see lcs analytic',
             'page callback' => '_lc_stats_call',
-            'access arguments' => array('administer lcs'),
+            'access arguments' => array('administer lcs page'),
             'file' => 'lcs.page.inc',
             'weight' => -10,
         ),
@@ -197,4 +197,5 @@ function theme_image_multifield_multitype($variables) {
         return $output;
     }
 }
+
 ?>
