@@ -5,24 +5,31 @@ function aiesec_types_menu() {
         'youth' => array(
             'title' => t('Youth'),
             'description' => 'Configure Lcs Management.',
-            'weight' => -30,
-            'page callback' => '_lc_management_admin',
+            'weight' => 2,
+            'page callback' => '_aiesec_types_show_page',
+            'menu_name' => 'main-menu',
             'access arguments' => array('access content'),
         ),
         'corporate' => array(
             'title' => t('Corporate'),
             'description' => 'Configure Lcs Management.',
-            'weight' => -30,
-            'page callback' => '_lc_management_admin',
+            'weight' => 3,
+            'menu_name' => 'main-menu',
+            'page callback' => '_aiesec_types_show_page',
             'access arguments' => array('access content'),
         ),
         'alumni' => array(
             'title' => t('Alumni'),
             'description' => 'Configure Lcs Management.',
-            'weight' => -30,
-            'page callback' => '_lc_management_admin',
+            'weight' => 4,
+            'menu_name' => 'main-menu',
+            'page callback' => '_aiesec_types_show_page',
             'access arguments' => array('access content'),
         )
     );
 }
 
+
+function _aiesec_types_show_page (){
+    return '';
+}
