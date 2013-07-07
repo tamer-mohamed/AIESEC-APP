@@ -50,13 +50,13 @@ function _city_management_admin_add_submit($form, &$form_state) {
     db_insert('city')
             ->fields(array(
                 'name' => $name,
-                'long' => $long,
+                'longitude' => $long,
                 'lat' => $lat,
                 'created' => REQUEST_TIME,
             ))
             ->execute();
     drupal_set_message('The city has been added succesfully');
-    drupal_goto("admin/config/citys/manage");
+    drupal_goto("admin/config/lcs/managecity");
 }
 
 function _city_management_admin_edit($form, &$form_submit, $id) {
@@ -73,7 +73,7 @@ function _city_management_admin_edit($form, &$form_submit, $id) {
         '#type' => 'textfield',
         '#required' => TRUE,
         '#description' => t('long of the city.'),
-        '#default_value' => $city['long'],
+        '#default_value' => $city['longitude'],
     );
     $form['lat'] = array(
         '#title' => t('city latidude'),
@@ -100,14 +100,14 @@ function _city_management_admin_edit_submit($form, &$form_state) {
     db_update('city')
             ->fields(array(
                 'name' => $name,
-                'long' => $long,
+                'longitude' => $long,
                 'lat' => $lat,
                 'created' => REQUEST_TIME,
             ))
             ->condition('id', $form_state['values']['id'])
             ->execute();
     drupal_set_message('The city has been edited succesfully');
-    drupal_goto("admin/config/citys/manage");
+    drupal_goto("admin/config/lcs/managecity");
 }
 
 /**
@@ -157,16 +157,16 @@ function _city_management_admin_delete($id) {
  */
 function _city_management_get_citys($id = '') {
     if ($id != '') {
-        $result = db_query('SELECT city.id, city.name, city.created, city.long,city.lat FROM city where id = :id', array(':id' => $id));
+        $result = db_query('SELECT city.id, city.name, city.created, city.longitude,city.lat FROM city where id = :id', array(':id' => $id));
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT city.id, city.name, city.created, city.long, city.lat FROM city');
+    $result = db_query('SELECT city.id, city.name, city.created, city.longitude, city.lat FROM city');
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['name'] = $record['name'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
-        $rows[$i]['long'] = $record['long'];
+        $rows[$i]['long'] = $record['longitude'];
         $rows[$i]['lat'] = $record['lat'];
         $rows[$i]['edit'] = l('Edit', 'admin/config/citys/edit/' . $record['id']);
         $rows[$i]['delete'] = l('Delete', 'admin/config/citys/delete/' . $record['id']);

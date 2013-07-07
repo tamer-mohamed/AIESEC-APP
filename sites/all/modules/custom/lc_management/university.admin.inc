@@ -40,7 +40,7 @@ function _university_management_admin_add_submit($form, &$form_state) {
             ))
             ->execute();
     drupal_set_message('The university has been added succesfully');
-    drupal_goto("admin/config/universitys/manage");
+    drupal_goto("admin/config/lcs/manageuniversity");
 }
 
 function _university_management_admin_edit($form, &$form_submit,$id){
@@ -101,7 +101,7 @@ function _university_management_admin_delete_confirm_submit($form, &$form_state)
         $form_values = $form_state['values'];
     }
 
-    drupal_goto("admin/config/universitys/manage");
+    drupal_goto("admin/config/lcs/manageuniversity");
 }
 
 /**
