@@ -36,6 +36,18 @@ function _lc_management_admin_add($form, &$form_submit) {
         '#options' => _lc_management_get_data('university'),
         '#description' => t('Select university of lc.'),
     );
+      $form['long'] = array(
+        '#title' => t('Lc longitude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('long of the Lc.'),
+    );
+    $form['lat'] = array(
+        '#title' => t('Lc latidude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('lat of the Lc.'),
+    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => 'Submit',
@@ -54,6 +66,8 @@ function _lc_management_admin_add_submit($form, &$form_state) {
     $activated = $form_state['values']['activated'];
     $city = $form_state['values']['city'];
     $university = $form_state['values']['university'];
+    $long = $form_state['values']['long'];
+    $lat = $form_state['values']['lat'];
     db_insert('lc')
             ->fields(array(
                 'name' => $name,
@@ -61,6 +75,8 @@ function _lc_management_admin_add_submit($form, &$form_state) {
                 'university' => $university,
                 'city' => $city,
                 'created' => REQUEST_TIME,
+                'longitude' => $long,
+                'lat' => $lat
             ))
             ->execute();
     drupal_set_message('The lc has been added succesfully');
@@ -97,6 +113,20 @@ function _lc_management_admin_edit($form, &$form_submit, $id) {
         '#description' => t('Select university of lc.'),
         '#default_value' => $lc['university'],
     );
+      $form['long'] = array(
+        '#title' => t('Lc longitude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('long of the Lc.'),
+        '#default_value' => $lc['longitude']
+    );
+    $form['lat'] = array(
+        '#title' => t('Lc latidude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('lat of the Lc.'),
+        '#default_value' => isset($lc['lat']) ? $lc['lat'] : ''
+    );
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $id
@@ -113,6 +143,8 @@ function _lc_management_admin_edit_submit($form, &$form_state) {
     $activated = $form_state['values']['activated'];
     $city = $form_state['values']['city'];
     $university = $form_state['values']['university'];
+    $long = $form_state['values']['long'];
+    $lat = $form_state['values']['lat'];
     db_update('lc')
             ->fields(array(
                 'name' => $name,
@@ -120,6 +152,8 @@ function _lc_management_admin_edit_submit($form, &$form_state) {
                 'city' => $city,
                 'university' => $university,
                 'created' => REQUEST_TIME,
+                'longitude' => $long,
+                'lat' => $lat,
             ))
             ->condition('id', $form_state['values']['id'])
             ->execute();
@@ -185,7 +219,7 @@ function _lc_management_get_data($tableName) {
  */
 function _lc_management_get_lcs($id = '', $noTheme = false, $activatedOnly = false) {
     if ($id != '') {
-        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated , lc.city , lc.university FROM lc where id = :id', array(':id' => $id));
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated , lc.city ,lc.longitude , lc.lat, lc.university FROM lc where id = :id', array(':id' => $id));
         return $result->fetchAssoc();
     }
     if ($activatedOnly)
@@ -200,6 +234,8 @@ function _lc_management_get_lcs($id = '', $noTheme = false, $activatedOnly = fal
         if ($id != ''){
             $rows[$i]['city'] = $record['city'];
             $rows[$i]['university'] = $record['university'];
+            $rows[$i]['long'] = $record['longitude'];
+            $rows[$i]['lat'] = $record['lat'];
         }
         $rows[$i]['name'] = $record['name'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);

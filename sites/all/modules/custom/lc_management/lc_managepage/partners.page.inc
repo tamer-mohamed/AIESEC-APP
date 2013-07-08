@@ -56,6 +56,12 @@ function _partners_admin_add_submit($form, &$form_state) {
     );
     $url = $form_state['values']['url'];
     $img = $form_state['values']['img'];
+    
+    if($img > 0){
+        $file = file_load($img);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
     db_insert('partner')
@@ -193,15 +199,15 @@ function _partners_get_data($id = '') {
     $lc = $user->lc_field['und'][0]['value'];
     if ($id != '') {
         $result = db_select('partner', 'p')
-                ->fields('p', array('id', 'title', 'created', 'img', 'description','url'))
+                ->fields('p', array('id', 'title', 'created', 'img', 'description', 'url'))
                 ->condition('id', $id)
                 ->execute();
         return $result->fetchAssoc();
     }
-     $result = db_select('partner', 'p')
-                ->fields('p', array('id', 'title', 'created', 'img', 'description','url'))
-                ->condition('lc_id', $lc)
-                ->execute();
+    $result = db_select('partner', 'p')
+            ->fields('p', array('id', 'title', 'created', 'img', 'description', 'url'))
+            ->condition('lc_id', $lc)
+            ->execute();
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
@@ -215,7 +221,7 @@ function _partners_get_data($id = '') {
 
         $i++;
     }
-    $header = array(t('title'),t('url'), t('img'), t('description'), t('Created'), t('Edit'), t('Delete'));
+    $header = array(t('title'), t('url'), t('img'), t('description'), t('Created'), t('Edit'), t('Delete'));
     $output = theme('table', array('header' => $header, 'rows' => $rows));
     return $output;
 }

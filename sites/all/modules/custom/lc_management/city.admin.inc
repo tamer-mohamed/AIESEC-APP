@@ -18,18 +18,7 @@ function _city_management_admin_add($form, &$form_submit) {
         '#required' => TRUE,
         '#description' => t('Name of the city.'),
     );
-    $form['long'] = array(
-        '#title' => t('city longitude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('long of the city.'),
-    );
-    $form['lat'] = array(
-        '#title' => t('city latidude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('lat of the city.'),
-    );
+   
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => 'Submit',
@@ -45,13 +34,10 @@ function _city_management_admin_add($form, &$form_submit) {
  */
 function _city_management_admin_add_submit($form, &$form_state) {
     $name = $form_state['values']['name'];
-    $long = $form_state['values']['long'];
-    $lat = $form_state['values']['lat'];
+    
     db_insert('city')
             ->fields(array(
                 'name' => $name,
-                'longitude' => $long,
-                'lat' => $lat,
                 'created' => REQUEST_TIME,
             ))
             ->execute();
@@ -68,20 +54,7 @@ function _city_management_admin_edit($form, &$form_submit, $id) {
         '#description' => t('Name of the city.'),
         '#default_value' => $city['name'],
     );
-    $form['long'] = array(
-        '#title' => t('city longitude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('long of the city.'),
-        '#default_value' => $city['longitude'],
-    );
-    $form['lat'] = array(
-        '#title' => t('city latidude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('lat of the city.'),
-        '#default_value' => $city['lat'],
-    );
+   
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $id
@@ -95,13 +68,9 @@ function _city_management_admin_edit($form, &$form_submit, $id) {
 
 function _city_management_admin_edit_submit($form, &$form_state) {
     $name = $form_state['values']['name'];
-    $long = $form_state['values']['long'];
-    $lat = $form_state['values']['lat'];
     db_update('city')
             ->fields(array(
                 'name' => $name,
-                'longitude' => $long,
-                'lat' => $lat,
                 'created' => REQUEST_TIME,
             ))
             ->condition('id', $form_state['values']['id'])
@@ -157,23 +126,21 @@ function _city_management_admin_delete($id) {
  */
 function _city_management_get_citys($id = '') {
     if ($id != '') {
-        $result = db_query('SELECT city.id, city.name, city.created, city.longitude,city.lat FROM city where id = :id', array(':id' => $id));
+        $result = db_query('SELECT city.id, city.name, city.created FROM city where id = :id', array(':id' => $id));
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT city.id, city.name, city.created, city.longitude, city.lat FROM city');
+    $result = db_query('SELECT city.id, city.name, city.created FROM city');
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['name'] = $record['name'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
-        $rows[$i]['long'] = $record['longitude'];
-        $rows[$i]['lat'] = $record['lat'];
         $rows[$i]['edit'] = l('Edit', 'admin/config/citys/edit/' . $record['id']);
         $rows[$i]['delete'] = l('Delete', 'admin/config/citys/delete/' . $record['id']);
 
         $i++;
     }
-    $header = array(t('Name'), t('Created'), t('Long'), t('Lat'), t('Edit'), t('Delete'));
+    $header = array(t('Name'), t('Created'),t('Edit'), t('Delete'));
     $output = theme('table', array('header' => $header, 'rows' => $rows));
     return $output;
 }

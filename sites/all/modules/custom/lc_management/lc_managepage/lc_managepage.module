@@ -176,7 +176,15 @@ function lc_managepage_theme() {
             'render element' => 'element',
         ),
         'theming_lc_page' => array(
-            'arguments' => array('lc' => null,'fbWall' => null),
+            'arguments' => array(
+                'lc' => null,
+                'fbWall' => null,
+                'tabs' => null,
+                'news' => null,
+                'teams' => null,
+                'partners' => null,
+                'email' => null
+                ),
             'template' => 'lc',
         ),
     );

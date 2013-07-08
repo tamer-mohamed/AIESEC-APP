@@ -14,7 +14,7 @@ function lc_management_schema() {
                 'name' => array(
                     'description' => 'The name of lc.',
                     'type' => 'varchar',
-                    'length' => 32,
+                    'length' => 100,
                     'not null' => TRUE,
                     'default' => '',
                 ),
@@ -24,6 +24,21 @@ function lc_management_schema() {
                     'unsigned' => TRUE,
                     'not null' => TRUE,
                     'default' => 0,
+                ),
+                
+                'longitude' => array(
+                    'description' => 'The longitude of a city.',
+                    'type' => 'varchar',
+                    'length' => 100,
+                    'not null' => TRUE,
+                    'default' => '',
+                ),
+                'lat' => array(
+                    'description' => 'The latitude of a city.',
+                    'type' => 'varchar',
+                    'length' => 100,
+                    'not null' => TRUE,
+                    'default' => '',
                 ),
                 'city' => array(
                     'description' => 'The city of lc.',
@@ -61,7 +76,7 @@ function lc_management_schema() {
                 'name' => array(
                     'description' => 'The name of City.',
                     'type' => 'varchar',
-                    'length' => 32,
+                    'length' => 100,
                     'not null' => TRUE,
                     'default' => '',
                 ),
@@ -71,20 +86,6 @@ function lc_management_schema() {
                     'unsigned' => TRUE,
                     'not null' => TRUE,
                     'default' => 0,
-                ),
-                'longitude' => array(
-                    'description' => 'The longitude of a city.',
-                    'type' => 'varchar',
-                    'length' => 32,
-                    'not null' => TRUE,
-                    'default' => '',
-                ),
-                'lat' => array(
-                    'description' => 'The latitude of a city.',
-                    'type' => 'varchar',
-                    'length' => 32,
-                    'not null' => TRUE,
-                    'default' => '',
                 ),
             ),
             'primary key' => array('id'),
@@ -101,7 +102,7 @@ function lc_management_schema() {
                 'name' => array(
                     'description' => 'The name of City.',
                     'type' => 'varchar',
-                    'length' => 32,
+                    'length' => 100,
                     'not null' => TRUE,
                     'default' => '',
                 ),

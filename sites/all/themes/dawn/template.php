@@ -257,7 +257,10 @@
 	 	$vars['front'] = drupal_is_front_page();
 	 	
 	 	switch ($vars['region']) {
-	 		case 'content': $vars['classes_array'][] = $theme->page['content_settings']; break;
+	 		case 'content': $vars['classes_array'][] = $theme->page['content_settings'];
+                            if(arg(0) == 'lc')
+                                $vars['classes_array'][1] = 'lcPage';
+                            break;
 	 		case 'footer': $vars['classes_array'][] = 'container'; break;
 	 		default: if ($span != 'none') { $vars['classes_array'][] = ('span'.$span); } break;
 	 	}

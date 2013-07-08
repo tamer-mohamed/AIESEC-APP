@@ -5,5 +5,6 @@ package = Miracle Pixels
 
 dependencies[] = lc_management
 dependencies[] = lc_field
+dependencies[] = contact
 
 files[] = lc_managepage.module
