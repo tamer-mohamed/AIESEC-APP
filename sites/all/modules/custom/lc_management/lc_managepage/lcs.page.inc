@@ -20,7 +20,6 @@ function _lc_managepage_form($form, &$form_submit) {
     }
     else
         $data = array();
-
     $form['bg'] = array(
         '#title' => t('Background Image'),
         '#type' => 'managed_file',
@@ -77,23 +76,12 @@ function _lc_managepage_form_validate($form, &$form_state) {
         'bg_img' => $form_state['values']['bg'],
         'logo' => $form_state['values']['logo'],
         'description' => $form_state['values']['desc']['value'],
-        'facebook' => $form_state['values']['facebook'],
-        'twitter' => $form_state['values']['twitter'],
-        'youtube' => $form_state['values']['youtube']
     );
-
-    if (!valid_url($data['facebook'], TRUE))
-        form_set_error('Invalid Url', 'Facebook url is not valid url');
-    else if (!valid_url($data['twitter'], TRUE))
-        form_set_error('Invalid Url', 'Twitter url is not valid url');
-    else if (!valid_url($data['youtube'], TRUE))
-        form_set_error('Invalid Url', 'Youtube url is not valid url');
 }
 
 function _lc_managepage_form_submit($form, &$form_state) {
     global $user;
     $user = user_load($user->uid);
-
     $data = array(
         'lc_id' => $user->lc_field['und'][0]['value'],
         'created' => time(),
@@ -104,6 +92,20 @@ function _lc_managepage_form_submit($form, &$form_state) {
         'twitter' => $form_state['values']['twitter'],
         'youtube' => $form_state['values']['youtube']
     );
+
+    if ($form_state['values']['bg'] > 0) {
+        $file = file_load($form_state['values']['bg']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+        file_usage_add($file, 'lc_managepage', 'background', $file->fid);
+    }
+
+    if ($form_state['values']['logo'] > 0) {
+        $file = file_load($form_state['values']['logo']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+        file_usage_add($file, 'lc_managepage', 'logo', $file->fid);
+    }
 
     if ($form_state['values']['exist']) {
         unset($data['created']);
@@ -117,6 +119,16 @@ function _lc_managepage_form_submit($form, &$form_state) {
                 ->execute();
     }
     drupal_set_message('Settings has been saved succesfully');
+}
+
+/*
+ * Page call function for lcs analytic
+ */
+
+function _lc_stats_call() {
+    drupal_add_js('https://www.google.com/jsapi', 'external');
+    drupal_add_js(drupal_get_path('module', 'lc_managepage') . '/js/chart.js', 'file');
+    return '<div id="chart_div"></div>';
 }
 
 ?>

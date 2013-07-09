@@ -24,6 +24,30 @@ function _lc_management_admin_add($form, &$form_submit) {
         '#options' => array('0' => 'Deacivated', '1' => 'Activated'),
         '#description' => t('Select status of lc.'),
     );
+    $form['city'] = array(
+        '#title' => t('City'),
+        '#type' => 'select',
+        '#options' => _lc_management_get_data('city'),
+        '#description' => t('Select city of lc.'),
+    );
+    $form['university'] = array(
+        '#title' => t('University'),
+        '#type' => 'select',
+        '#options' => _lc_management_get_data('university'),
+        '#description' => t('Select university of lc.'),
+    );
+      $form['long'] = array(
+        '#title' => t('Lc longitude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('long of the Lc.'),
+    );
+    $form['lat'] = array(
+        '#title' => t('Lc latidude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('lat of the Lc.'),
+    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => 'Submit',
@@ -40,18 +64,26 @@ function _lc_management_admin_add($form, &$form_submit) {
 function _lc_management_admin_add_submit($form, &$form_state) {
     $name = $form_state['values']['name'];
     $activated = $form_state['values']['activated'];
+    $city = $form_state['values']['city'];
+    $university = $form_state['values']['university'];
+    $long = $form_state['values']['long'];
+    $lat = $form_state['values']['lat'];
     db_insert('lc')
             ->fields(array(
                 'name' => $name,
                 'activated' => $activated,
+                'university' => $university,
+                'city' => $city,
                 'created' => REQUEST_TIME,
+                'longitude' => $long,
+                'lat' => $lat
             ))
             ->execute();
     drupal_set_message('The lc has been added succesfully');
     drupal_goto("admin/config/lcs/manage");
 }
 
-function _lc_management_admin_edit($form, &$form_submit,$id){
+function _lc_management_admin_edit($form, &$form_submit, $id) {
     $lc = _lc_management_get_lcs($id);
     $form['name'] = array(
         '#title' => t('Lc Name'),
@@ -67,6 +99,34 @@ function _lc_management_admin_edit($form, &$form_submit,$id){
         '#description' => t('Select status of lc.'),
         '#default_value' => $lc['activated'],
     );
+    $form['city'] = array(
+        '#title' => t('City'),
+        '#type' => 'select',
+        '#options' => _lc_management_get_data('city'),
+        '#description' => t('Select city of lc.'),
+        '#default_value' => $lc['city'],
+    );
+    $form['university'] = array(
+        '#title' => t('University'),
+        '#type' => 'select',
+        '#options' => _lc_management_get_data('university'),
+        '#description' => t('Select university of lc.'),
+        '#default_value' => $lc['university'],
+    );
+      $form['long'] = array(
+        '#title' => t('Lc longitude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('long of the Lc.'),
+        '#default_value' => $lc['longitude']
+    );
+    $form['lat'] = array(
+        '#title' => t('Lc latidude'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+        '#description' => t('lat of the Lc.'),
+        '#default_value' => isset($lc['lat']) ? $lc['lat'] : ''
+    );
     $form['id'] = array(
         '#type' => 'hidden',
         '#value' => $id
@@ -81,17 +141,26 @@ function _lc_management_admin_edit($form, &$form_submit,$id){
 function _lc_management_admin_edit_submit($form, &$form_state) {
     $name = $form_state['values']['name'];
     $activated = $form_state['values']['activated'];
+    $city = $form_state['values']['city'];
+    $university = $form_state['values']['university'];
+    $long = $form_state['values']['long'];
+    $lat = $form_state['values']['lat'];
     db_update('lc')
             ->fields(array(
                 'name' => $name,
                 'activated' => $activated,
+                'city' => $city,
+                'university' => $university,
                 'created' => REQUEST_TIME,
+                'longitude' => $long,
+                'lat' => $lat,
             ))
             ->condition('id', $form_state['values']['id'])
             ->execute();
     drupal_set_message('The lc has been edited succesfully');
     drupal_goto("admin/config/lcs/manage");
 }
+
 /**
  * confirm delete lc form
  * 
@@ -132,22 +201,42 @@ function _lc_management_admin_delete($id) {
             ->execute();
 }
 
+function _lc_management_get_data($tableName) {
+    $result = db_query('SELECT lc.id, lc.name FROM ' . $tableName . ' as lc');
+    $rows = array();
+    $i = 0;
+    while ($record = $result->fetchAssoc()) {
+        $rows[$record['id']] = $record['name'];
+        $i++;
+    }
+    return $rows;
+}
 
 /**
  * Get Lcs or single lc by id query
  * 
  * @return type
  */
-function _lc_management_get_lcs($id = '') {
-    if($id != '')
-    {
-        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc where id = :id',array(':id' => $id));
+function _lc_management_get_lcs($id = '', $noTheme = false, $activatedOnly = false) {
+    if ($id != '') {
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated , lc.city ,lc.longitude , lc.lat, lc.university FROM lc where id = :id', array(':id' => $id));
         return $result->fetchAssoc();
     }
-    $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc');
+    if ($activatedOnly)
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc where lc.activated = 1');
+    else
+        $result = db_query('SELECT lc.id, lc.name, lc.created, lc.activated FROM lc');
     $rows = array();
     $i = 0;
     while ($record = $result->fetchAssoc()) {
+        if ($noTheme)
+            $rows[$i]['id'] = $record['id'];
+        if ($id != ''){
+            $rows[$i]['city'] = $record['city'];
+            $rows[$i]['university'] = $record['university'];
+            $rows[$i]['long'] = $record['longitude'];
+            $rows[$i]['lat'] = $record['lat'];
+        }
         $rows[$i]['name'] = $record['name'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
         $rows[$i]['activated'] = $record['activated'] == 0 ? 'Deacivated' : 'Activated';
@@ -156,6 +245,8 @@ function _lc_management_get_lcs($id = '') {
 
         $i++;
     }
+    if ($noTheme)
+        return $rows;
     $header = array(t('Name'), t('Created'), t('Active'), t('Edit'), t('Delete'));
     $output = theme('table', array('header' => $header, 'rows' => $rows));
     return $output;
