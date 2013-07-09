@@ -1,16 +1,18 @@
 <?php
 require_once drupal_get_path('module', 'contact') . '/contact.pages.inc';
-$imgpath = file_load($information['bg_img']);
+$imgpath = file_load($information['bg_img']); 
 $imgpath = isset($imgpath->uri) ? file_create_url($imgpath->uri) : false;
 $logo = file_load($information['logo']);
-$logo = isset($logo->uri) ? file_create_url($logo->uri) : false;
+$logo = isset($logo->uri) ? image_style_url("lc_logo", $logo->uri): false;
 $recipient = user_load($email['uid']);
 $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
 ?>
-<header id="masthead" class="masthead" style="background:url('<?php echo $imgpath ?>') top center no-repeat">	
+<header id="masthead" class="masthead " style="background:url('<?php echo $imgpath ?>') top center no-repeat">	
     <div class="container">
+        
+            <img src="<?php echo $logo ?>" height="50" class="img-polaroid pull-left"/>	
         <h1 class="title" id="page-title">
-            <img src="<?php echo $logo ?>" height="50" class="img-polaroid"/>			
+            <?php print $information['name']; ?>
         </h1>
     </div>
     <div class="divider"></div>
