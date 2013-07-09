@@ -1,6 +1,6 @@
 <?php
 
-//	require_once dirname(__FILE__) . '/includes/dawn.inc';
+	require_once dirname(__FILE__) . '/includes/dawn.inc';
 //function dawn_preprocess_user_picture(&$variables) {
 //
 //  $variables['user_picture'] = '';

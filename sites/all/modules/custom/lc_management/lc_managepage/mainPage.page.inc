@@ -20,16 +20,16 @@ function _get_lc_by_id($id) {
 
     if ($data->rowCount() > 0) {
         $tabs = get_data_for_lc_by_table_name('tab', $id);
-        $tabs = $tabs->rowCount() > 0 ? $tabs->fetchAll(PDO::FETCH_ASSOC) : null;
+        $tabs = $tabs->rowCount() > 0 ? $tabs->fetchAll(PDO::FETCH_ASSOC) : array();
 
         $news = get_data_for_lc_by_table_name('news', $id);
-        $news = $news->rowCount() > 0 ? $news->fetchAll(PDO::FETCH_ASSOC) : null;
+        $news = $news->rowCount() > 0 ? $news->fetchAll(PDO::FETCH_ASSOC) : array();
 
         $teams = get_data_for_lc_by_table_name('team', $id);
-        $teams = $teams->rowCount() > 0 ? $teams->fetchAll(PDO::FETCH_ASSOC) : null;
+        $teams = $teams->rowCount() > 0 ? $teams->fetchAll(PDO::FETCH_ASSOC) : array();
 
         $partners = get_data_for_lc_by_table_name('partner', $id);
-        $partners = $partners->rowCount() > 0 ? $partners->fetchAll(PDO::FETCH_ASSOC) : null;
+        $partners = $partners->rowCount() > 0 ? $partners->fetchAll(PDO::FETCH_ASSOC) : array();
 
         $lc = array(
             'information' => $data->fetchAssoc(),

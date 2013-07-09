@@ -131,6 +131,12 @@ function _partners_admin_edit_submit($form, &$form_state) {
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
     $img = $form_state['values']['img'];
+    
+    if($img > 0){
+        $file = file_load($img);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
     db_update('partner')
             ->fields(array(
                 'title' => $title,

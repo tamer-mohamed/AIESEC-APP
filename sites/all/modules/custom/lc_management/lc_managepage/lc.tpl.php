@@ -1,9 +1,10 @@
 <?php
+require_once drupal_get_path('module', 'contact') . '/contact.pages.inc';
 $imgpath = file_load($information['bg_img']);
 $imgpath = isset($imgpath->uri) ? file_create_url($imgpath->uri) : false;
 $logo = file_load($information['logo']);
 $logo = isset($logo->uri) ? file_create_url($logo->uri) : false;
-$recipient = user_load(array('uid' => $email['uid']));
+$recipient = user_load($email['uid']);
 $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
 ?>
 <header id="masthead" class="masthead" style="background:url('<?php echo $imgpath ?>') top center no-repeat">	
@@ -40,7 +41,7 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                             <a href="/drupal/dawn/node/29">
                                                 <span class="view-more"></span>
                                                 <span class="hover"></span></a>
-                                            <img typeof="foaf:Image" src="http://demo.themeboutique.com/drupal/dawn/sites/default/files/styles/homepage_blog/public/post5.jpg?itok=Tw47EBfv" width="440" height="242" alt="">  
+                                            <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>" width="440" height="242" alt="">  
                                         </div>  
                                         <div class="date">
                                             <span class="month"><?php print date('F', $new['created']); ?></span>
@@ -67,6 +68,21 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                         </div>
                         <div class="span4">
                             <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=12.33,12.33&amp;t=m&amp;z=5&amp;output=embed"></iframe>
+                            <div class="teams-container row">
+                                <?php foreach ($teams as $team): ?>
+                                    <div class="span2 thumbnail">
+                                        <div class="image">
+                                            <a href="#">
+                                                <span class="view-more"></span>
+                                                <span class="hover"></span></a>
+                                            <img typeof="foaf:Image" src="<?php print file_create_url(file_load($team['img'])->uri); ?>" width="470" height="356" alt="">
+                                        </div>
+                                        <h3><?php print $team['title']; ?></h3>
+                                        <h4><?php print mb_substr($team['description'], 0, 30); ?></h4>
+                                    </div>
+                                <?php endforeach; ?>
+                                <div class="clearfix"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -84,10 +100,10 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                     <a href="<?php print $partner['url']; ?>" target="_blank">
                                         <span class="view-more"></span>
                                         <span class="hover"></span></a>
-                                    <img typeof="foaf:Image" src="http://demo.themeboutique.com/drupal/dawn/sites/default/files/styles/portfolio_thumbnail/public/item12.jpg?itok=95ccFjN0" width="470" height="356" alt="">
+                                    <img typeof="foaf:Image" src="<?php print file_create_url(file_load($partner['img'])->uri); ?>" width="470" height="356" alt="">
                                 </div>
                                 <h3><?php print $partner['title']; ?></h3>
-                                <h4><?php print mb_substr($new['description'], 0, 30); ?></h4>
+                                <h4><?php print mb_substr($partner['description'], 0, 30); ?></h4>
                             </div>    
                         </div>
                     <?php endforeach; ?>

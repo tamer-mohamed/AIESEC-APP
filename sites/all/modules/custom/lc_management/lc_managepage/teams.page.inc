@@ -73,6 +73,11 @@ function _teams_admin_add_submit($form, &$form_state) {
     $facebook = $form_state['values']['facebook'];
     $twitter = $form_state['values']['twitter'];
     $linkedin = $form_state['values']['linkedin'];
+    if($img > 0){
+        $file = file_load($img);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
     db_insert('team')
             ->fields(array(
                 'title' => $title,
@@ -159,6 +164,11 @@ function _teams_admin_edit_submit($form, &$form_state) {
     $facebook = $form_state['values']['facebook'];
     $twitter = $form_state['values']['twitter'];
     $linkedin = $form_state['values']['linkedin'];
+    if($img > 0){
+        $file = file_load($img);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
     db_update('team')
             ->fields(array(
                 'title' => $title,

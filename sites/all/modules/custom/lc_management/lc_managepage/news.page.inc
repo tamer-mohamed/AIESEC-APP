@@ -51,6 +51,12 @@ function _news_admin_add_submit($form, &$form_state) {
     $img = $form_state['values']['img'];
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
+    
+     if ($form_state['values']['img'] > 0) {
+        $file = file_load($form_state['values']['img']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
     db_insert('news')
             ->fields(array(
                 'title' => $title,
@@ -110,6 +116,13 @@ function _news_admin_edit_submit($form, &$form_state) {
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
     $img = $form_state['values']['img'];
+    
+    if ($form_state['values']['img'] > 0) {
+        $file = file_load($form_state['values']['img']);
+        $file->status = FILE_STATUS_PERMANENT;
+        file_save($file);
+    }
+    
     db_update('news')
             ->fields(array(
                 'title' => $title,
