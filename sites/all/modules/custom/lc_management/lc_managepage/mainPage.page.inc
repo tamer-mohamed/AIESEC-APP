@@ -13,8 +13,11 @@ function get_data_for_lc_by_table_name($tbl, $id) {
 }
 
 function _get_lc_by_id($id) {
-    $data = db_select('lc_page', 'lc')
-            ->fields('lc')
+    $data = db_select('lc_page', 'lc');
+    $data->join('lc', 'l', 'lc.lc_id = l.id');
+
+    $data = $data->fields('lc')
+            ->fields('l')
             ->condition('lc_id', $id)
             ->execute();
 
@@ -38,7 +41,7 @@ function _get_lc_by_id($id) {
             'news' => $news,
             'teams' => $teams,
             'partners' => $partners,
-            'email' => get_lcp_email($id), 
+            'email' => get_lcp_email($id),
         );
         drupal_add_css(drupal_get_path('module', 'lc_managepage') . '/css/lc.css');
         drupal_add_js(drupal_get_path('module', 'lc_managepage') . '/js/lc.js', 'file');

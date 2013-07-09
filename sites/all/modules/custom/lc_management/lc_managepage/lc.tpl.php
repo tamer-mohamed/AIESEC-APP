@@ -38,7 +38,7 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                 <?php foreach ($news as $new): ?>
                                     <div class="span4">
                                         <div class="img-polaroid blog">
-                                            <a href="/drupal/dawn/node/29">
+                                            <a href="#">
                                                 <span class="view-more"></span>
                                                 <span class="hover"></span></a>
                                             <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>" width="440" height="242" alt="">  
@@ -47,11 +47,14 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                             <span class="month"><?php print date('F', $new['created']); ?></span>
                                             <span class="day"><?php print date('d', $new['created']); ?></span>
                                         </div>    
-                                        <h3 class="blog"><a href="/drupal/dawn/node/29"><?php print $new['title']; ?></a></h3>    
+                                        <h3 class="blog"><a href="#"><?php print $new['title']; ?></a></h3>    
                                         <p class="blog-teaser"><?php print mb_substr($new['description'], 0, 70) . ".."; ?></p>
                                     </div>
                                 <?php endforeach; ?>
                                 <div class="clearfix"></div>
+                            </div>
+                            <div class="span3">
+                                <div class="tweet" data-twitter="<?php print $information['twitter'];?>"></div>
                             </div>
                         </div>
                     </div>
@@ -67,7 +70,7 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                             <?php print $contact; ?>
                         </div>
                         <div class="span4">
-                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=12.33,12.33&amp;t=m&amp;z=5&amp;output=embed"></iframe>
+                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=<?php echo $information['longitude'].",".$information['lat']; ?>&amp;t=m&amp;z=5&amp;output=embed"></iframe>
                             <div class="teams-container row">
                                 <?php foreach ($teams as $team): ?>
                                     <div class="span2 thumbnail">

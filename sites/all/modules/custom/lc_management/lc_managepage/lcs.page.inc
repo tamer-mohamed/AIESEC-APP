@@ -64,20 +64,6 @@ function _lc_managepage_form($form, &$form_submit) {
         '#description' => t('The url to Youtube account.'),
         '#default_value' => isset($data['youtube']) ? $data['youtube'] : ''
     );
-     $form['long'] = array(
-        '#title' => t('city longitude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('long of the city.'),
-        '#default_value' => isset($data['long']) ? $data['long'] : ''
-    );
-    $form['lat'] = array(
-        '#title' => t('city latidude'),
-        '#type' => 'textfield',
-        '#required' => TRUE,
-        '#description' => t('lat of the city.'),
-        '#default_value' => isset($data['lat']) ? $data['lat'] : ''
-    );
     $form['submit'] = array(
         '#type' => 'submit',
         '#value' => 'Save',

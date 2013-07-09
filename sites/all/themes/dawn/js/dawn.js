@@ -193,9 +193,9 @@ jQuery(document).ready(function($){
 	/* TWITTER FEED */
 	$account = $('div.tweet').attr('data-twitter');
 		
-    $(".tweet").tweet({
+    jQuery(".tweet").tweet({
         username: $account,
-        modpath: 'sites/all/themes/dawn/js/plugins/twitter/',
+        modpath: Drupal.settings.basePath+'/sites/all/themes/dawn/js/plugins/twitter/',
         join_text: "auto",
         avatar_size: 16,
         count: 2,
