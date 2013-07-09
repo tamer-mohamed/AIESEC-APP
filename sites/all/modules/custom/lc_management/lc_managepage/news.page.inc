@@ -56,6 +56,7 @@ function _news_admin_add_submit($form, &$form_state) {
         $file = file_load($form_state['values']['img']);
         $file->status = FILE_STATUS_PERMANENT;
         file_save($file);
+        file_usage_add($file, 'lc_managepage', 'newsimg', $file->fid);
     }
     db_insert('news')
             ->fields(array(

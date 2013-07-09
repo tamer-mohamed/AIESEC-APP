@@ -97,12 +97,14 @@ function _lc_managepage_form_submit($form, &$form_state) {
         $file = file_load($form_state['values']['bg']);
         $file->status = FILE_STATUS_PERMANENT;
         file_save($file);
+        file_usage_add($file, 'lc_managepage', 'background', $file->fid);
     }
 
     if ($form_state['values']['logo'] > 0) {
         $file = file_load($form_state['values']['logo']);
         $file->status = FILE_STATUS_PERMANENT;
         file_save($file);
+        file_usage_add($file, 'lc_managepage', 'logo', $file->fid);
     }
 
     if ($form_state['values']['exist']) {

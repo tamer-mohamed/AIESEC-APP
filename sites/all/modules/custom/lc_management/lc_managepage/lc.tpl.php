@@ -33,8 +33,13 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                             <?php echo $information['description']; ?> <br/>
                         </div>
                         <div class="clearfix"></div>
-                        <div class="row">
                             <div class="news-container span9">
+                                
+                                <div class="heading">
+                                    <h2 class="">
+                                        Latest News
+                                    </h2>
+                                </div>
                                 <?php foreach ($news as $new): ?>
                                     <div class="span4">
                                         <div class="img-polaroid blog">
@@ -54,9 +59,13 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                 <div class="clearfix"></div>
                             </div>
                             <div class="span3">
-                                <div class="tweet" data-twitter="<?php print $information['twitter'];?>"></div>
+                                <div class="heading">
+                                    <h2 class="">
+                                        Latest Tweets
+                                    </h2>
+                                </div>
+                                <div class="tweet" data-twitter="<?php print $information['twitter']; ?>"></div>
                             </div>
-                        </div>
                     </div>
                 </div>
                 <?php foreach ($tabs as $tab): ?>
@@ -67,11 +76,32 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                 <div class="tab-pane" id="contactus">
                     <div class="row">
                         <div class="span8">
+                            
+                            <div class="heading">
+                                <h2 class="">
+                                    Send us a message
+                                </h2>
+                            </div>
                             <?php print $contact; ?>
                         </div>
                         <div class="span4">
-                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=<?php echo $information['longitude'].",".$information['lat']; ?>&amp;t=m&amp;z=5&amp;output=embed"></iframe>
+                            <div class="heading">
+                                <h2 class="">
+                                    Location
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="span4">
+
+                            <iframe width="100%" height="200" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=<?php echo $information['longitude'] . "," . $information['lat']; ?>&amp;t=m&amp;z=5&amp;output=embed"></iframe>
                             <div class="teams-container row">
+                                <div class="span4">
+                                    <div class="heading">
+                                        <h2 class="">
+                                            Team
+                                        </h2>
+                                    </div>
+                                </div>
                                 <?php foreach ($teams as $team): ?>
                                     <div class="span2 thumbnail">
                                         <div class="image">

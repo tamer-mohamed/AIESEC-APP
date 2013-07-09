@@ -61,6 +61,7 @@ function _partners_admin_add_submit($form, &$form_state) {
         $file = file_load($img);
         $file->status = FILE_STATUS_PERMANENT;
         file_save($file);
+        file_usage_add($file, 'lc_managepage', 'partnersimg', $file->fid);
     }
     $title = $form_state['values']['title'];
     $desc = $form_state['values']['description']['value'];
