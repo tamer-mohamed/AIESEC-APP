@@ -31,8 +31,10 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
             <div class="tab-content">
                 <div class="tab-pane active" id="home">
                     <div class="row">
-                        <div class="lc-page-main-content span12">
-                            <?php echo $information['description']; ?> <br/>
+                        <div class="lc-page-main-content span12 callout">
+                            <div class='callout-text'>
+                            <?php echo $information['description']; ?> 
+                            </div>
                         </div>
                         <div class="clearfix"></div>
                             <div class="news-container span9">
