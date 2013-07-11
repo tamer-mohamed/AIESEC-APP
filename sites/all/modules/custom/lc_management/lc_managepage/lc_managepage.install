@@ -49,6 +49,11 @@ function lc_managepage_schema() {
                     'type' => 'text',
                     'not null' => TRUE,
                 ),
+                'advertisment' => array(
+                    'description' => 'The ads in html.',
+                    'type' => 'text',
+                    'not null' => TRUE,
+                ),
                 'facebook' => array(
                     'description' => 'The fb.',
                     'type' => 'varchar',

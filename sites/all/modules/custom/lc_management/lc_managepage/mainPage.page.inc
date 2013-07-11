@@ -43,6 +43,7 @@ function _get_lc_by_id($id) {
             'partners' => $partners,
             'email' => get_lcp_email($id),
         );
+        
         drupal_add_css(drupal_get_path('module', 'lc_managepage') . '/css/lc.css');
         drupal_add_js(drupal_get_path('module', 'lc_managepage') . '/js/lc.js', 'file');
         return theme('theming_lc_page', $lc);

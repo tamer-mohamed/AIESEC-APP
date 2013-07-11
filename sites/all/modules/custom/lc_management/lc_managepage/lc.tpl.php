@@ -6,6 +6,7 @@ $logo = file_load($information['logo']);
 $logo = isset($logo->uri) ? image_style_url("lc_logo", $logo->uri): false;
 $recipient = user_load($email['uid']);
 $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
+drupal_set_title($information['name']." - LC");
 ?>
 <header id="masthead" class="masthead " style="background:url('<?php echo $imgpath ?>') top center no-repeat">	
     <div class="container">
@@ -18,6 +19,18 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
     <div class="divider"></div>
 </header>
 <div class="container" id="main">
+    <?php if($information['advertisment'] != ''):?>
+    <div class="row">
+        <div class="span12">
+            <div class="callout">
+                <div class="callout-text">
+                    <?php print $information['advertisment']; ?>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>  
+    <?php endif; ?>
     <div class="row">
         <div class="span12">
             <ul class="nav nav-tabs" id="myTab">
@@ -31,8 +44,8 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
             <div class="tab-content">
                 <div class="tab-pane active" id="home">
                     <div class="row">
-                        <div class="lc-page-main-content span12 callout">
-                            <div class='callout-text'>
+                        <div class="lc-page-main-content span12 ">
+                            <div class='well'>
                             <?php echo $information['description']; ?> 
                             </div>
                         </div>
@@ -47,10 +60,12 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                 <?php foreach ($news as $new): ?>
                                     <div class="span4">
                                         <div class="img-polaroid blog">
-                                            <a href="#">
+                                            <a href="#news-<?php print $new['id'];?>" data-toggle="modal">
                                                 <span class="view-more"></span>
                                                 <span class="hover"></span></a>
+                                            <?php if(file_load($new['img'])):?>
                                             <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>" width="440" height="242" alt="">  
+                                            <?php endif; ?>
                                         </div>  
                                         <div class="date">
                                             <span class="month"><?php print date('F', $new['created']); ?></span>
@@ -112,7 +127,9 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                             <a href="#">
                                                 <span class="view-more"></span>
                                                 <span class="hover"></span></a>
+                                            <?php if(file_load($team['img'])): ?>
                                             <img typeof="foaf:Image" src="<?php print file_create_url(file_load($team['img'])->uri); ?>" width="470" height="356" alt="">
+                                            <?php endif; ?>
                                         </div>
                                         <h3><?php print $team['title']; ?></h3>
                                         <h4><?php print mb_substr($team['description'], 0, 30); ?></h4>
@@ -137,7 +154,9 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
                                     <a href="<?php print $partner['url']; ?>" target="_blank">
                                         <span class="view-more"></span>
                                         <span class="hover"></span></a>
+                                    <?php if(file_load($partner['img'])): ?>
                                     <img typeof="foaf:Image" src="<?php print file_create_url(file_load($partner['img'])->uri); ?>" width="470" height="356" alt="">
+                                    <?php endif; ?>
                                 </div>
                                 <h3><?php print $partner['title']; ?></h3>
                                 <h4><?php print mb_substr($partner['description'], 0, 30); ?></h4>
@@ -150,3 +169,24 @@ $contact = drupal_render(drupal_get_form('contact_personal_form', $recipient));
         </div>
     </div>
 </div>
+
+<!-- Modals for news !-->
+<?php foreach ($news as $new): ?>
+<div class="modal hide fade news-modal" id="news-<?php print $new['id'];?>">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3><?php print $new['title'];?></h3>
+  </div>
+  <div class="modal-body">
+    <?php if(file_load($new['img'])): ?>
+        <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>"height="100" alt="" class="pull-left">  
+    <?php endif; ?>
+    <div class="content">
+        <?php print $new['description']; ?>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+<?php endforeach; ?>

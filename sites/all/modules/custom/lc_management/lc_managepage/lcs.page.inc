@@ -46,6 +46,12 @@ function _lc_managepage_form($form, &$form_submit) {
         '#description' => t('Information about the lc.'),
         '#default_value' => isset($data['description']) ? $data['description'] : ''
     );
+    $form['advertisment'] = array(
+        '#title' => t('Lc Ads.'),
+        '#type' => 'text_format',
+        '#description' => t('Ads for the lc.'),
+        '#default_value' => isset($data['advertisment']) ? $data['advertisment'] : ''
+    );
     $form['facebook'] = array(
         '#title' => t('Facebook url'),
         '#type' => 'textfield',
@@ -90,9 +96,10 @@ function _lc_managepage_form_submit($form, &$form_state) {
         'description' => $form_state['values']['desc']['value'],
         'facebook' => $form_state['values']['facebook'],
         'twitter' => $form_state['values']['twitter'],
-        'youtube' => $form_state['values']['youtube']
+        'youtube' => $form_state['values']['youtube'],
+        'advertisment' => $form_state['values']['advertisment']['value']
     );
-
+    
     if ($form_state['values']['bg'] > 0) {
         $file = file_load($form_state['values']['bg']);
         $file->status = FILE_STATUS_PERMANENT;
@@ -114,9 +121,19 @@ function _lc_managepage_form_submit($form, &$form_state) {
                 ->condition('lc_id', $data['lc_id'])
                 ->execute();
     } else {
-        db_insert('lc_page')
+        $lc_id_from_q = db_insert('lc_page')
                 ->fields($data)
                 ->execute();
+        
+        /*$data = db_select('lc', 'lc')
+            ->fields('name')
+            ->condition('id', $user->lc_field['und'][0]['value'])
+            ->execute();
+        $data = $data->fetchAssoc();
+        
+        $default_node_path = "lc/".$lc_id_from_q;
+        $alternate_url = "lc/".$data['name']
+        path_set_alias($default_node_path, $alternate_url, 0, '');*/
     }
     drupal_set_message('Settings has been saved succesfully');
 }
