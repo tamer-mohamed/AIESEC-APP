@@ -5,11 +5,16 @@
  * and open the template in the editor.
  */
 
-function get_data_for_lc_by_table_name($tbl, $id) {
-    return db_select($tbl, $tbl)
-                    ->fields($tbl)
-                    ->condition('lc_id', $id)
-                    ->execute();
+function get_data_for_lc_by_table_name($tbl, $id,$limit = 2,$pager = false) {
+    $query = db_select($tbl, $tbl);
+    $query->fields($tbl);
+    $query->condition('lc_id', $id);
+    
+    if($pager)
+         $query = $query->extend('PagerDefault')->limit(1);
+    else
+         $query = $query->range(0,$limit);
+    return $query->execute();
 }
 
 function _get_lc_by_id($id) {
@@ -28,6 +33,9 @@ function _get_lc_by_id($id) {
         $news = get_data_for_lc_by_table_name('news', $id);
         $news = $news->rowCount() > 0 ? $news->fetchAll(PDO::FETCH_ASSOC) : array();
 
+        $allNews = get_data_for_lc_by_table_name('news', $id,2,true);
+        $allNews = $allNews->rowCount() > 0 ? $allNews->fetchAll(PDO::FETCH_ASSOC) : array();
+        
         $teams = get_data_for_lc_by_table_name('team', $id);
         $teams = $teams->rowCount() > 0 ? $teams->fetchAll(PDO::FETCH_ASSOC) : array();
 
@@ -38,12 +46,16 @@ function _get_lc_by_id($id) {
             'information' => $data->fetchAssoc(),
             'tabs' => $tabs,
             'fbWall' => null,
-            'news' => $news,
+            'news' => array(
+                'teasers' => $news,
+                'all' => $allNews,
+                'pager' => theme('pager')
+            ),
             'teams' => $teams,
             'partners' => $partners,
             'email' => get_lcp_email($id),
         );
-        
+
         drupal_add_css(drupal_get_path('module', 'lc_managepage') . '/css/lc.css');
         drupal_add_js(drupal_get_path('module', 'lc_managepage') . '/js/lc.js', 'file');
         return theme('theming_lc_page', $lc);

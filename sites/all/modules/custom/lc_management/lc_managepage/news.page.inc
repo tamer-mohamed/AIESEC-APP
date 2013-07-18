@@ -24,6 +24,7 @@ function _news_admin_add($form, &$form_submit) {
     $form['description'] = array(
         '#title' => t('Description'),
         '#type' => 'text_format',
+        '#format' => 'full_html',
         '#description' => t('Description of news.'),
     );
     $form['submit'] = array(
@@ -209,7 +210,7 @@ function _news_get_data($id = '') {
         $rows[$i]['description'] = mb_substr($record['description'], 0, 50) . "....";
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
         $rows[$i]['edit'] = l('Edit', 'manage-news/edit/' . $record['id']);
-        $rows[$i]['delete'] = l('Delete', 'manage-news/delete/' . $record['id'], array('attributes' => array('class' => 'btn-danger btn')));
+        $rows[$i]['delete'] = l('Delete', 'manage-news/delete/' . $record['id'], array('attributes' => array('class' => 'btn-danger btn btn-small')));
 
         $i++;
     }

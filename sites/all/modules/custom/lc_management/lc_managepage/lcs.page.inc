@@ -43,12 +43,14 @@ function _lc_managepage_form($form, &$form_submit) {
     $form['desc'] = array(
         '#title' => t('About Lc'),
         '#type' => 'text_format',
+        '#format' => 'full_html',
         '#description' => t('Information about the lc.'),
         '#default_value' => isset($data['description']) ? $data['description'] : ''
     );
     $form['advertisment'] = array(
         '#title' => t('Lc Ads.'),
         '#type' => 'text_format',
+        '#format' => 'full_html',
         '#description' => t('Ads for the lc.'),
         '#default_value' => isset($data['advertisment']) ? $data['advertisment'] : ''
     );
@@ -125,15 +127,15 @@ function _lc_managepage_form_submit($form, &$form_state) {
                 ->fields($data)
                 ->execute();
         
-        /*$data = db_select('lc', 'lc')
+        $data = db_select('lc', 'lc')
             ->fields('name')
             ->condition('id', $user->lc_field['und'][0]['value'])
             ->execute();
         $data = $data->fetchAssoc();
         
         $default_node_path = "lc/".$lc_id_from_q;
-        $alternate_url = "lc/".$data['name']
-        path_set_alias($default_node_path, $alternate_url, 0, '');*/
+        $alternate_url = "lc/".$data['name'];
+        path_set_alias($default_node_path, $alternate_url, 0, '');
     }
     drupal_set_message('Settings has been saved succesfully');
 }
