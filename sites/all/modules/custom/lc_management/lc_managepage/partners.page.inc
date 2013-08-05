@@ -221,16 +221,15 @@ function _partners_get_data($id = '') {
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['title'] = $record['title'];
         $rows[$i]['url'] = $record['url'];
-        $rows[$i]['img'] = "<img width='50' src='" . file_create_url(file_load($record['img'])->uri) . "' />";
         $rows[$i]['description'] = mb_substr($record['description'], 0, 50) . "....";
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
-        $rows[$i]['edit'] = l('Edit', 'manage-partner/edit/' . $record['id']);
+        $rows[$i]['edit'] = l('Edit', 'manage-partner/edit/' . $record['id'], array('attributes' => array('class' => 'btn btn-small')));
         $rows[$i]['delete'] = l('Delete', 'manage-partner/delete/' . $record['id'], array('attributes' => array('class' => 'btn-danger btn btn-small')));
 
         $i++;
     }
-    $header = array(t('title'), t('url'), t('img'), t('description'), t('Created'), t('Edit'), t('Delete'));
-    $output = theme('table', array('header' => $header, 'rows' => $rows));
+    $header = array(t('title'), t('url'), t('description'), t('Created'), t('Edit'), t('Delete'));
+    $output = theme('table', array('header' => $header, 'rows' => $rows,'empty'=>t('No Records Found.')));
     return $output;
 }
 

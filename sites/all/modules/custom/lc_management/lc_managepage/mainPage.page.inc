@@ -5,16 +5,45 @@
  * and open the template in the editor.
  */
 
-function get_data_for_lc_by_table_name($tbl, $id,$limit = 2,$pager = false) {
+function get_data_for_lc_by_table_name($tbl, $id, $limit = 2, $pager = false) {
     $query = db_select($tbl, $tbl);
     $query->fields($tbl);
     $query->condition('lc_id', $id);
-    
-    if($pager)
-         $query = $query->extend('PagerDefault')->limit(1);
+
+    if ($pager)
+        $query = $query->extend('PagerDefault')->limit(1);
     else
-         $query = $query->range(0,$limit);
+        $query = $query->range(0, $limit);
     return $query->execute();
+}
+
+function _get_all_news($id) {
+    $data = db_select('lc_page', 'lc');
+    $data->join('lc', 'l', 'lc.lc_id = l.id');
+
+    $data = $data->fields('lc')
+            ->fields('l')
+            ->condition('lc_id', $id)
+            ->execute();
+
+    if ($data->rowCount() > 0) {
+        $allNews = get_data_for_lc_by_table_name('news', $id, 2, true);
+        $allNews = $allNews->rowCount() > 0 ? $allNews->fetchAll(PDO::FETCH_ASSOC) : array();
+
+        $lc = array(
+            'news' => array(
+                'all' => $allNews,
+                'pager' => theme('pager')
+            ),
+        );
+
+        $commands = array();
+        $commands[] = ajax_command_html('#to_replace',theme('theming_lc_news', $lc));
+        $page = array('#type' => 'ajax', '#commands' => $commands);
+        ajax_deliver($page);
+    }
+    else
+        drupal_not_found();
 }
 
 function _get_lc_by_id($id) {
@@ -33,9 +62,6 @@ function _get_lc_by_id($id) {
         $news = get_data_for_lc_by_table_name('news', $id);
         $news = $news->rowCount() > 0 ? $news->fetchAll(PDO::FETCH_ASSOC) : array();
 
-        $allNews = get_data_for_lc_by_table_name('news', $id,2,true);
-        $allNews = $allNews->rowCount() > 0 ? $allNews->fetchAll(PDO::FETCH_ASSOC) : array();
-        
         $teams = get_data_for_lc_by_table_name('team', $id);
         $teams = $teams->rowCount() > 0 ? $teams->fetchAll(PDO::FETCH_ASSOC) : array();
 
@@ -48,8 +74,6 @@ function _get_lc_by_id($id) {
             'fbWall' => null,
             'news' => array(
                 'teasers' => $news,
-                'all' => $allNews,
-                'pager' => theme('pager')
             ),
             'teams' => $teams,
             'partners' => $partners,

@@ -256,19 +256,18 @@ function _teams_get_data($id = '') {
     $i = 0;
     while ($record = $result->fetchAssoc()) {
         $rows[$i]['title'] = $record['title'];
-        $rows[$i]['img'] = "<img width='50' src='" . file_create_url(file_load($record['img'])->uri) . "' />";
         $rows[$i]['description'] = mb_substr($record['description'], 0, 50) . "....";
         $rows[$i]['facebook'] = $record['facebook'];
         $rows[$i]['twitter'] = $record['twitter'];
         $rows[$i]['linkedin'] = $record['linkedin'];
         $rows[$i]['created'] = date('Y-M-D h:m', $record['created']);
-        $rows[$i]['edit'] = l('Edit', 'manage-team/edit/' . $record['id']);
+        $rows[$i]['edit'] = l('Edit', 'manage-team/edit/' . $record['id'], array('attributes' => array('class' => 'btn btn-small')));
         $rows[$i]['delete'] = l('Delete', 'manage-team/delete/' . $record['id'], array('attributes' => array('class' => 'btn-danger btn btn-small')));
 
         $i++;
     }
-    $header = array(t('title'), t('img'), t('description'),t('facebook'),t('twitter'),t('linkedin'), t('Created'), t('Edit'), t('Delete'));
-    $output = theme('table', array('header' => $header, 'rows' => $rows));
+    $header = array(t('title'), t('description'),t('facebook'),t('twitter'),t('linkedin'), t('Created'), t('Edit'), t('Delete'));
+    $output = theme('table', array('header' => $header, 'rows' => $rows,'empty'=>t('No Records Found.')));
     return $output;
 }
 

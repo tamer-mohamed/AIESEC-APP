@@ -176,7 +176,7 @@ function _tabs_get_data($id = '') {
         $i++;
     }
     $header = array(t('title'), t('description'), t('Created'), t('Edit'), t('Delete'));
-    $output = theme('table', array('header' => $header, 'rows' => $rows));
+    $output = theme('table', array('header' => $header, 'rows' => $rows,'empty'=>t('No Records Found.')));
     return $output;
 }
 

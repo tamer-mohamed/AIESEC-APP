@@ -11,7 +11,7 @@ drupal_set_title($information['name'] . " - LC");
 <header id="masthead" class="masthead " style="background:url('<?php echo $imgpath ?>') top center no-repeat">	
     <div class="container">
 
-        <img src="<?php echo $logo ?>" height="50" class="img-polaroid pull-left"/>	
+        <img src="<?php echo $logo ?>" height="50" class="img-polaroid pull-left logo-lc"/>	
         <h1 class="title" id="page-title">
             <?php print $information['name']; ?>
         </h1>
@@ -38,7 +38,22 @@ drupal_set_title($information['name'] . " - LC");
                 <?php foreach ($tabs as $tab): ?>
                     <li><a href="#<?php print 'tab' . $tab['id']; ?>"><?php print $tab['title']; ?></a></li>
                 <?php endforeach; ?>
-                <li><a href="#news">All news</a></li>
+                <li>
+                    <?php
+                    $link = array(
+                        '#type' => 'link',
+                        '#title' => t('All news'),
+                        '#href' => 'lc/'.$information['id'].'/news',
+                        '#options' => array('fragment' => 'news'),
+                        '#ajax' => array(
+                            'wrapper' => 'to_replace',
+                            'method' => 'replace',
+                            'effect' => 'fade',
+                        )
+                    );
+                    ?>
+                    <?php print drupal_render($link); ?>
+                </li>
                 <li><a href="#contactus">Contact us</a></li>
             </ul>
 
@@ -72,7 +87,7 @@ drupal_set_title($information['name'] . " - LC");
                                         <span class="month"><?php print date('F', $new['created']); ?></span>
                                         <span class="day"><?php print date('d', $new['created']); ?></span>
                                     </div>    
-                                    <h3 class="blog"><a href="#"><?php print $new['title']; ?></a></h3>    
+                                    <h3 class="blog"><a href="#news-<?php print $new['id']; ?>" data-toggle="modal"><?php print $new['title']; ?></a></h3>    
                                     <p class="blog-teaser"><?php print mb_substr($new['description'], 0, 70) . ".."; ?></p>
                                 </div>
                             <?php endforeach; ?>
@@ -94,30 +109,7 @@ drupal_set_title($information['name'] . " - LC");
                     </div>
                 <?php endforeach; ?>
                 <div class="tab-pane" id="news">
-                    <div class="row">
-                        <?php foreach ($news['all'] as $new): ?>
-                                <div class="span4">
-                                    <div class="img-polaroid blog">
-                                        <a href="#newsAll-<?php print $new['id']; ?>" data-toggle="modal">
-                                            <span class="view-more"></span>
-                                            <span class="hover"></span></a>
-                                        <?php if (file_load($new['img'])): ?>
-                                            <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>" width="440" height="242" alt="">  
-                                        <?php endif; ?>
-                                    </div>  
-                                    <div class="date">
-                                        <span class="month"><?php print date('F', $new['created']); ?></span>
-                                        <span class="day"><?php print date('d', $new['created']); ?></span>
-                                    </div>    
-                                    <h3 class="blog"><a href="#"><?php print $new['title']; ?></a></h3>    
-                                    <p class="blog-teaser"><?php print mb_substr($new['description'], 0, 70) . ".."; ?></p>
-                                </div>
-                            <?php endforeach; ?>
-                            <div class="clearfix"></div>
-                            <div class="span12">
-                                <?php print $news['pager']; ?>
-                            </div>
-                    </div>
+                    <div id="to_replace"></div>
                 </div>
                 <div class="tab-pane" id="contactus">
                     <div class="row">
@@ -148,7 +140,8 @@ drupal_set_title($information['name'] . " - LC");
                                         </h2>
                                     </div>
                                 </div>
-                                <?php $teamCounter = 0;
+                                <?php
+                                $teamCounter = 0;
                                 foreach ($teams as $team):
                                     ?>
                                     <div class="span2 team">
@@ -203,27 +196,6 @@ drupal_set_title($information['name'] . " - LC");
 <!-- Modals for news !-->
 <?php foreach ($news['teasers'] as $new): ?>
     <div class="modal hide fade news-modal" id="news-<?php print $new['id']; ?>">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3><?php print $new['title']; ?></h3>
-        </div>
-        <div class="modal-body">
-            <?php if (file_load($new['img'])): ?>
-                <img typeof="foaf:Image" src="<?php print file_create_url(file_load($new['img'])->uri); ?>"height="100" alt="" class="pull-left">  
-                <?php endif; ?>
-            <div class="content">
-    <?php print $new['description']; ?>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-        </div>
-    </div>
-<?php endforeach; ?>
-
-<!-- Modals for newsAll !-->
-<?php foreach ($news['all'] as $new): ?>
-    <div class="modal hide fade news-modal" id="newsAll-<?php print $new['id']; ?>">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3><?php print $new['title']; ?></h3>

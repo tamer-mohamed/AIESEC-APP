@@ -57,19 +57,22 @@ function _lc_managepage_form($form, &$form_submit) {
     $form['facebook'] = array(
         '#title' => t('Facebook url'),
         '#type' => 'textfield',
-        '#description' => t('The url to facebook account.'),
+        '#maxlength' => 250, 
+        '#description' => t('The url to facebook account. 250 char max.'),
         '#default_value' => isset($data['facebook']) ? $data['facebook'] : ''
     );
     $form['twitter'] = array(
         '#title' => t('Twitter url'),
         '#type' => 'textfield',
-        '#description' => t('The url to Twitter account.'),
+        '#maxlength' => 250, 
+        '#description' => t('The url to Twitter account. 250 char max.'),
         '#default_value' => isset($data['twitter']) ? $data['twitter'] : ''
     );
     $form['youtube'] = array(
         '#title' => t('Youtube url'),
-        '#type' => 'textfield',
-        '#description' => t('The url to Youtube account.'),
+        '#type' => 'textfield', 
+        '#maxlength' => 250, 
+        '#description' => t('The url to Youtube account. 250 char max.'),
         '#default_value' => isset($data['youtube']) ? $data['youtube'] : ''
     );
     $form['submit'] = array(
